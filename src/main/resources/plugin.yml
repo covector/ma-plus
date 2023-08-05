@@ -1,0 +1,9 @@
+main: dev.covector.maplus.MobArenaPlusPlugin
+name: MobArenaPlus
+version: 1.0
+softdepend: [MobArena]
+
+commands:
+   marevive:
+      description: Revive random or specified player
+      usage: /<command> player [player] OR /<command> random [arena] OR /<command> player [player] [ml skill] OR /<command> random [arena] [ml skill]
