@@ -1,0 +1,4 @@
+download ajLeaderboards-2.7.0.jar and put it here
+
+cant find the maven repo for it so this is scuffed af
+wtv

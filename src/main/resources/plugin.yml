@@ -1,9 +1,12 @@
 main: dev.covector.maplus.MobArenaPlusPlugin
 name: MobArenaPlus
 version: 1.0
-softdepend: [MobArena]
+softdepend: [MobArena, ajLeaderboards, MythicMobs]
 
 commands:
    marevive:
       description: Revive random or specified player
       usage: /<command> player [player] OR /<command> random [arena] OR /<command> player [player] [ml skill] OR /<command> random [arena] [ml skill]
+   mmability:
+      description: Extend mythic mobs abilities by using command interface
+      usage: /<command> <ability-id> <arg1> <arg2> <arg3>...

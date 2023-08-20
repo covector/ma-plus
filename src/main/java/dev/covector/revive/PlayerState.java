@@ -19,7 +19,7 @@ public class PlayerState {
     public int exp;
     public int deathWave;
     private static Field singleWaves = null;
-    private static int[] majorUpgrades = { 19, 49 };
+    private static int[] majorUpgrades = { 19, 49 };  // wooooooo love to hardcode
 
     public PlayerState(Player player, int deathWave) {
         // cloning player inventory

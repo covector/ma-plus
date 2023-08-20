@@ -6,7 +6,12 @@ import org.bukkit.plugin.Plugin;
 
 import com.garbagemule.MobArena.MobArena;
 
+import us.ajg0702.leaderboards.LeaderboardPlugin;
+
 import dev.covector.maplus.revive.*;
+import dev.covector.maplus.leaderboardclear.*;
+import dev.covector.maplus.tridentnopickup.*;
+import dev.covector.maplus.mmextension.*;
 
 public class MobArenaPlusPlugin extends JavaPlugin
 {
@@ -20,10 +25,25 @@ public class MobArenaPlusPlugin extends JavaPlugin
         MobArena mobarena = (MobArena) maplugin;
 
         Utils.setMobArena(mobarena);
+        Utils.setPlugin(this);
 
+        // REVIVE
         Reviver reviver = new Reviver();
         this.getCommand("marevive").setExecutor(new ReviveCommand(reviver));
         Bukkit.getPluginManager().registerEvents(new ReviveMAListener(reviver), this);
+
+        // LEADERBOARD CLEAR
+        Plugin ajlplugin = getServer().getPluginManager().getPlugin("ajLeaderboards");
+        if (ajlplugin != null) {
+            LeaderboardPlugin lbPlugin = (LeaderboardPlugin) ajlplugin;
+            Bukkit.getPluginManager().registerEvents(new CLBListener(lbPlugin), this);
+        }
+
+        // TRIDENT NO PICKUP
+        Bukkit.getPluginManager().registerEvents(new TridentNoPickUpListener(), this);
+
+        // MYTHIC MOBS EXTENSION
+        this.getCommand("mmability").setExecutor(new AbilityCommandInterface());
         
         getLogger().info("Mob Arena Plus Plugin Activated!");
     }
