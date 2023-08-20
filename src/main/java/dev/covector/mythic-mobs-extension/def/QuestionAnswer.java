@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.ChatColor;
 
 import com.garbagemule.MobArena.framework.Arena;
 
@@ -64,6 +65,8 @@ public class QuestionAnswer extends Ability {
         private double complexityTimeMultiplier;
         private String punishmentSkill;
 
+        private String casterName;
+
         private Random random = new Random();
         private int complexity;
         private int duration;
@@ -79,6 +82,11 @@ public class QuestionAnswer extends Ability {
             this.complexityTimeMultiplier = complexityTimeMultiplier;
             this.punishmentSkill = punishmentSkill;
 
+            this.casterName = caster.getCustomName();
+            if (casterName == null) {
+                casterName = caster.getName();
+            }
+
             // get players
             Arena arena = Utils.getArenaWithMonster(caster);
             if (arena == null) {
@@ -90,8 +98,9 @@ public class QuestionAnswer extends Ability {
             // start message
             generateQuestion();
             for (Player player : players) {
-                player.sendMessage(player.getName() + "-senpai, please teach me how to do: " + question);
-                player.sendMessage("Onegaishimasu!");
+                player.sendMessage(getMessageStart(ChatColor.AQUA) + player.getName() + "-senpai, please teach me how to do: ");
+                player.sendMessage(getMessageStart(ChatColor.AQUA) + "" + question);
+                player.sendMessage(getMessageStart(ChatColor.AQUA) + "Onegaishimasu!");
             }
 
             runTaskTimer(Utils.getPlugin(), 0, 20);
@@ -107,7 +116,7 @@ public class QuestionAnswer extends Ability {
         public void a(AsyncPlayerChatEvent event) {
             if (players.contains(event.getPlayer())) {
                 if (event.getMessage().equals(answer)) {
-                    win();
+                    win(event.getPlayer());
                     close();
                 }
             }
@@ -115,15 +124,25 @@ public class QuestionAnswer extends Ability {
 
         @Override
         public void run() {
+            if (caster.isDead()) {
+                close();
+                return;
+            }
+
             if (ti++ > duration) {
                 lose();
                 close();
+                return;
             }
 
             // Count down
-            if (duration - ti < 5) {
-                tellPlayers(String.valueOf(duration - ti + 1) + "...");
+            if (duration - ti + 1 < 5) {
+                tellPlayers(ChatColor.AQUA + String.valueOf(duration - ti + 2) + "...");
             }
+        }
+
+        private String getMessageStart(ChatColor color) {
+            return color + "" + ChatColor.BOLD + casterName + " > " + ChatColor.RESET + "" + color;
         }
 
         private void tellPlayers(String message) {
@@ -132,15 +151,18 @@ public class QuestionAnswer extends Ability {
             }
         }
 
-        private void win() {
-            for (Player player : players) {
-                player.sendMessage("Thanks for teaching me!");
-            }
+        private void win(Player winner) {
+            Bukkit.getScheduler().runTaskLater(Utils.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    tellPlayers(getMessageStart(ChatColor.YELLOW) + winner.getName() + "-senpai, thanks for teaching me!");
+                }
+            }, 20);
         }
 
         private void lose() {
             for (Player player : players) {
-                player.sendMessage("You are not helpful a all!");
+                player.sendMessage(getMessageStart(ChatColor.DARK_RED) + "You are not helpful at all!");
                 MMExtUtils.castMMSkill(caster, punishmentSkill, player, null);
             }
         }
@@ -150,11 +172,15 @@ public class QuestionAnswer extends Ability {
             duration = (int) (baseTime + complexity * complexityTimeMultiplier);
             
             QuestionTree questionTree = new QuestionTree(random);
+            int maxBracketLevel = -1;
             for (int i = 0; i < complexity; i++) {
-                questionTree.addComplexity(random);
+                int bracketLevel = questionTree.addComplexity(random);
+                if (bracketLevel > maxBracketLevel) {
+                    maxBracketLevel = bracketLevel;
+                }
             }
 
-            question = questionTree.toString();
+            question = questionTree.writeQuestion(maxBracketLevel);
             answer = String.valueOf(questionTree.evaluate());
         }
 
@@ -163,31 +189,51 @@ public class QuestionAnswer extends Ability {
             private QuestionTree left;
             private QuestionTree right;
             private int value;
-            private int maxValue = 10;
+            private int bracketLevel = -1;
+            private QuestionTree parent;
 
             public QuestionTree(Random random) {
-                this.op = Operator.LEAF;
-                this.value = random.nextInt(maxValue) + 1;
+                this(random, null);
             }
 
-            public QuestionTree(int value) {
+            public QuestionTree(Random random, QuestionTree parent) {
+                this(random.nextInt(10) + 1, parent);
+            }
+
+            public QuestionTree(int value, QuestionTree parent) {
                 this.op = Operator.LEAF;
                 this.value = value;
+                this.parent = parent;
             }
 
-            public void addComplexity(Random random) {
+            public int addComplexity(Random random) {
                 if (op == Operator.LEAF) {
-                    op = Operator.values()[random.nextInt(2) + 1];
-                    left = new QuestionTree(value);
+                    op = Operator.values()[random.nextInt(3)];
+                    int BL = evaluateBracketLevel();
+                    left = new QuestionTree(value, this);
                     value = 0;
-                    right = new QuestionTree(random);
+                    right = new QuestionTree(random, this);
+                    return BL;
                 } else {
                     if (random.nextBoolean()) {
-                        left.addComplexity(random);
+                        return left.addComplexity(random);
                     } else {
-                        right.addComplexity(random);
+                        return right.addComplexity(random);
                     }
                 }
+            }
+
+            private int evaluateBracketLevel() {
+                if (parent == null) {
+                    bracketLevel = -1;
+                    return -1;
+                }
+                if (needBracket()) {
+                    bracketLevel = parent.bracketLevel + 1;
+                } else {
+                    bracketLevel = parent.bracketLevel;
+                }
+                return bracketLevel;
             }
 
             public int evaluate() {
@@ -204,31 +250,54 @@ public class QuestionAnswer extends Ability {
                 return 0;
             }
 
-            public String toString(Operator parentOp) {
-                switch (op) {
-                    case ADD:
-                        if (parentOp == Operator.SUB || parentOp == Operator.MUL) {
-                            return "(" + left.toString() + " + " + right.toString() + ")";
-                        } else {
-                            return left.toString() + " + " + right.toString();
-                        }
-                    case SUB:
-                        if (parentOp == Operator.SUB || parentOp == Operator.MUL) {
-                            return "(" + left.toString() + " - " + right.toString() + ")";
-                        } else {
-                            return left.toString() + " - " + right.toString();
-                        }
-                    case MUL:
-                        return left.toString() + " x " + right.toString();
-                    case LEAF:
-                        return Integer.toString(value);
+            private boolean needBracket() {
+                if (parent == null) {
+                    return false;
                 }
-                return "";
+                Operator parentOp = parent.op;
+                return (parentOp == Operator.SUB || parentOp == Operator.MUL) && (op == Operator.ADD || op == Operator.SUB);
+            }
+
+            private ChatColor getBracketColor(int maxBracketLevel) {
+                // return QuestionAnswer.bracketLevelColors[(maxBracketLevel - bracketLevel) % QuestionAnswer.bracketLevelColors.length];
+                return QuestionAnswer.bracketLevelColors[bracketLevel % QuestionAnswer.bracketLevelColors.length];
+            }
+
+            public String writeQuestion(int maxBracketLevel) {
+                String expression = op == Operator.LEAF ? 
+                ChatColor.AQUA + String.valueOf(value) :
+                left.writeQuestion(maxBracketLevel) + " " + ChatColor.RED + op.getSymbol() + " " + right.writeQuestion(maxBracketLevel);
+
+                if (needBracket()) {
+                    return getBracketColor(maxBracketLevel) + "(" + expression + getBracketColor(maxBracketLevel) + ")";
+                } else {
+                    return expression;
+                }
             }
         }
     }
     
     enum Operator {
-        ADD, SUB, MUL, LEAF
+        ADD("+"), SUB("-"), MUL("x"), LEAF("");
+
+        private String symbol;
+
+        private Operator(String symbol) {
+            this.symbol = symbol;
+        }
+
+        public String getSymbol() {
+            return symbol;
+        }
     }
+
+    static ChatColor[] bracketLevelColors = new ChatColor[] {
+        ChatColor.WHITE,
+        ChatColor.LIGHT_PURPLE,
+        ChatColor.YELLOW,
+        ChatColor.DARK_GREEN,
+        ChatColor.GOLD,
+        ChatColor.BLUE,
+        ChatColor.GRAY
+    };
 }

@@ -43,8 +43,6 @@ public class MMExtUtils {
             throw new IllegalArgumentException("targetEntity and targetLoc cannot both be null");
         }
 
-        Bukkit.broadcastMessage(targetEntity.getUniqueId().toString());
-
         SkillExecutor skillManager = MythicBukkit.inst().getSkillManager();
 
         Optional<Skill> opt = skillManager.getSkill(skillName);

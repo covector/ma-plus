@@ -1,7 +1,7 @@
 main: dev.covector.maplus.MobArenaPlusPlugin
 name: MobArenaPlus
 version: 1.0
-softdepend: [MobArena, ajLeaderboards, MythicMobs]
+softdepend: [MobArena, ajLeaderboards, MythicMobs, GlowAPI, PacketListenerApi]
 
 commands:
    marevive:

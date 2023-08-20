@@ -10,6 +10,7 @@ public class AbilityRegistry {
         add(new FlashBlind());
         add(new RaycastDirection());
         add(new QuestionAnswer());
+        add(new SetGlow());
     }
 
     private void add(Ability ability) {
