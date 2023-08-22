@@ -208,7 +208,12 @@ public class QuestionAnswer extends Ability {
 
             public int addComplexity(Random random) {
                 if (op == Operator.LEAF) {
-                    op = Operator.values()[random.nextInt(3)];
+                    if (parent != null && parent.op == Operator.MUL) {
+                        op = Operator.values()[random.nextInt(2)];
+                    } else {
+                        op = Operator.values()[random.nextInt(3)];
+                    }
+                    
                     int BL = evaluateBracketLevel();
                     left = new QuestionTree(value, this);
                     value = 0;
