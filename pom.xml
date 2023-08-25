@@ -72,10 +72,10 @@
       <scope>provided</scope>
 	</dependency>
   <dependency>
-        <groupId>org.inventivetalent.packetlistenerapi</groupId>
-        <artifactId>api</artifactId>
-        <version>3.9.10-SNAPSHOT</version>
-        <scope>provided</scope>
+    <groupId>com.comphenix.protocol</groupId>
+    <artifactId>ProtocolLib</artifactId>
+    <version>5.1.0</version>
+    <scope>provided</scope>
     </dependency>
   </dependencies>
   

@@ -44,4 +44,8 @@ public class CLBListener implements Listener {
         clearLeaderboards();
         updateScoreboard(event.getArena());
     }
+
+    public void unregister() {
+        ArenaStartEvent.getHandlerList().unregister(this);
+    }
 }

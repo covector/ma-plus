@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.ChatColor;
 
 public abstract class Raycast extends DefaultParamAbility {
     private String syntax = "caster:<caster-uuid> onHitEntity:<entity-hit-callback-skill> onHeadShot:<headshot-callback-skill> onHitBlock:<block-hit-callback-skill> onHitNothing:<nothing-hit-callback-skill> hitBlockCenter:<boolean> hitBlockMode:<DEFAULT|EXCLUDE_ENTITY|ALWAYS> piercing:<int> raySize:<double> maxDistance:<double> fluidCollisionMode:<NEVER|SOURCE_ONLY|ALWAYS> ignorePassableBlocks:<boolean> sourceOffsetX:<double> sourceOffsetY:<double> sourceOffsetZ:<double> sourceOffsetGlobalY:<boolean> sourceOffsetXIgnorePitch:<boolean> sourceOffsetRelative:<boolean> filterMode:<ALL|PLAYER_ONLY|NOT_PLAYER> headShotMargin:<double> debug:<boolean>";
@@ -99,8 +100,18 @@ public abstract class Raycast extends DefaultParamAbility {
             LivingEntity livingEntity = (LivingEntity) entity;
             
             if (getParam(parsedParam, "onHeadShot") != null) {
-                if (entityray.getHitPosition().distance(livingEntity.getEyeLocation().toVector()) < headShotMargin) {
+                // if (entityray.getHitPosition().distance(livingEntity.getEyeLocation().toVector()) < headShotMargin) {
+                HeadShotDetection.HeadShotResult headShot = HeadShotDetection.isHeadShot(livingEntity, entityray.getHitPosition());
+                // Bukkit.broadcastMessage("distance: " + headShot.getDistance());
+                if (casterMob instanceof Player) {
+                    ((Player) casterMob).sendMessage(ChatColor.AQUA + "Headshot distance: " + headShot.getDistance());
+                }
+                if (headShot.isHeadShot()) {
                     // headshot
+                    // Bukkit.broadcastMessage("headshot");
+                    if (casterMob instanceof Player) {
+                        ((Player) casterMob).sendMessage(ChatColor.GREEN + "Headshot!");
+                    }
                     MMExtUtils.castMMSkill(casterMob, getParam(parsedParam, "onHeadShot"), livingEntity, entityray.getHitPosition().toLocation(casterMob.getWorld()));
                 } else {
                     // bodyshot

@@ -11,6 +11,8 @@ public class AbilityRegistry {
         add(new RaycastDirection());
         add(new QuestionAnswer());
         add(new SetGlow());
+        add(new LookAt());
+        add(new Pumpkin());
     }
 
     private void add(Ability ability) {

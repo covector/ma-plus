@@ -45,4 +45,8 @@ public class TridentNoPickUpListener implements Listener {
             event.setCancelled(true);
         }
     }
+
+    public void unregister() {
+        PlayerPickupArrowEvent.getHandlerList().unregister(this);
+    }
 }

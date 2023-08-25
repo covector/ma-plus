@@ -27,4 +27,9 @@ public class ReviveMAListener implements Listener {
     public void onArenaEnd(ArenaEndEvent event) {
         reviver.clearSavedStates(event.getArena());
     }
+
+    public void unregister() {
+        ArenaEndEvent.getHandlerList().unregister(this);
+        ArenaPlayerDeathEvent.getHandlerList().unregister(this);
+    }
 }
