@@ -12,7 +12,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.ChatColor;
 
 public abstract class Raycast extends DefaultParamAbility {
-    private String syntax = "caster:<caster-uuid> onHitEntity:<entity-hit-callback-skill> onHeadShot:<headshot-callback-skill> onHitBlock:<block-hit-callback-skill> onHitNothing:<nothing-hit-callback-skill> hitBlockCenter:<boolean> hitBlockMode:<DEFAULT|EXCLUDE_ENTITY|ALWAYS> piercing:<int> raySize:<double> maxDistance:<double> fluidCollisionMode:<NEVER|SOURCE_ONLY|ALWAYS> ignorePassableBlocks:<boolean> sourceOffsetX:<double> sourceOffsetY:<double> sourceOffsetZ:<double> sourceOffsetGlobalY:<boolean> sourceOffsetXIgnorePitch:<boolean> sourceOffsetRelative:<boolean> filterMode:<ALL|PLAYER_ONLY|NOT_PLAYER> headShotMargin:<double> debug:<boolean>";
+    private String syntax = "caster:<caster-uuid> onHitEntity:<entity-hit-callback-skill> onHeadShot:<headshot-callback-skill> onHitBlock:<block-hit-callback-skill> onHitNothing:<nothing-hit-callback-skill> hitBlockCenter:<boolean> hitAirOnMaxDistance:<boolean> hitBlockMode:<DEFAULT|EXCLUDE_ENTITY|ALWAYS> piercing:<int> raySize:<double> maxDistance:<double> fluidCollisionMode:<NEVER|SOURCE_ONLY|ALWAYS> ignorePassableBlocks:<boolean> sourceOffsetX:<double> sourceOffsetY:<double> sourceOffsetZ:<double> sourceOffsetGlobalY:<boolean> sourceOffsetXIgnorePitch:<boolean> sourceOffsetRelative:<boolean> filterMode:<ALL|PLAYER_ONLY|NOT_PLAYER> debug:<boolean>";
 
     public Raycast() {
         setDefault("caster", null);
@@ -21,6 +21,7 @@ public abstract class Raycast extends DefaultParamAbility {
         setDefault("onHitBlock", null);
         setDefault("onHitNothing", null);
         setDefault("hitBlockCenter", "false");
+        setDefault("hitAirOnMaxDistance", "false");
         setDefault("hitBlockMode", "DEFAULT");
         setDefault("piercing", "0");
         setDefault("raySize", "0");
@@ -34,7 +35,7 @@ public abstract class Raycast extends DefaultParamAbility {
         setDefault("sourceOffsetXIgnorePitch", "false");
         setDefault("sourceOffsetRelative", "true");
         setDefault("filterMode", "ALL");
-        setDefault("headShotMargin", "0.5");
+        // setDefault("headShotMargin", "0.5");
     }
 
     public String raycast(ParsedParam parsedParam, Vector direction) {
@@ -45,6 +46,7 @@ public abstract class Raycast extends DefaultParamAbility {
         LivingEntity casterMob = (LivingEntity) caster;
         HitBlockMode hitBlockMode = HitBlockMode.valueOf(getParam(parsedParam, "hitBlockMode"));
         boolean hitBlockCenter = getBoolean(parsedParam, "hitBlockCenter");
+        boolean hitAirOnMaxDistance = getBoolean(parsedParam, "hitAirOnMaxDistance");
         int hitLimit = getInt(parsedParam, "piercing") + 1;
         double raySize = getDouble(parsedParam, "raySize");
         double maxDistance = getDouble(parsedParam, "maxDistance");
@@ -57,7 +59,7 @@ public abstract class Raycast extends DefaultParamAbility {
         boolean sourceOffsetXIgnorePitch = getBoolean(parsedParam, "sourceOffsetXIgnorePitch");
         boolean sourceOffsetRelative = getBoolean(parsedParam, "sourceOffsetRelative");
         FilterMode filterMode = FilterMode.valueOf(getParam(parsedParam, "filterMode"));
-        double headShotMargin = getDouble(parsedParam, "headShotMargin");
+        // double headShotMargin = getDouble(parsedParam, "headShotMargin");
 
         Location location = casterMob.getEyeLocation().clone();
         if (sourceOffsetRelative) {
@@ -101,15 +103,15 @@ public abstract class Raycast extends DefaultParamAbility {
             
             if (getParam(parsedParam, "onHeadShot") != null) {
                 // if (entityray.getHitPosition().distance(livingEntity.getEyeLocation().toVector()) < headShotMargin) {
-                HeadShotDetection.HeadShotResult headShot = HeadShotDetection.isHeadShot(livingEntity, entityray.getHitPosition());
+                HeadShotDetection.HeadShotResult headShot = HeadShotDetection.isHeadShot(livingEntity, entityray.getHitPosition(), raySize);
                 // Bukkit.broadcastMessage("distance: " + headShot.getDistance());
-                if (casterMob instanceof Player) {
+                if (getBoolean(parsedParam, "debug") && casterMob instanceof Player) {
                     ((Player) casterMob).sendMessage(ChatColor.AQUA + "Headshot distance: " + headShot.getDistance());
                 }
                 if (headShot.isHeadShot()) {
                     // headshot
                     // Bukkit.broadcastMessage("headshot");
-                    if (casterMob instanceof Player) {
+                    if (getBoolean(parsedParam, "debug") && casterMob instanceof Player) {
                         ((Player) casterMob).sendMessage(ChatColor.GREEN + "Headshot!");
                     }
                     MMExtUtils.castMMSkill(casterMob, getParam(parsedParam, "onHeadShot"), livingEntity, entityray.getHitPosition().toLocation(casterMob.getWorld()));
@@ -149,8 +151,12 @@ public abstract class Raycast extends DefaultParamAbility {
             fluidCollisionMode,
             ignorePassableBlocks
             );
-        if (blockray == null && getParam(parsedParam, "onHitNothing") != null) {
-            MMExtUtils.castMMSkill(casterMob, getParam(parsedParam, "onHitNothing"), casterMob, null);
+        if (blockray == null) {
+            if (hitAirOnMaxDistance) {
+                MMExtUtils.castMMSkill(casterMob, getParam(parsedParam, "onHitBlock"), null, location.clone().add(direction.clone().multiply(maxDistance)));
+            } else if (getParam(parsedParam, "onHitNothing") != null) {
+                MMExtUtils.castMMSkill(casterMob, getParam(parsedParam, "onHitNothing"), casterMob, null);
+            }
             return null;
         }
         

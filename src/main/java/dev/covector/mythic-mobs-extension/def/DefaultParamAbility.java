@@ -31,6 +31,9 @@ public abstract class DefaultParamAbility extends Ability {
     }
 
     protected boolean getBoolean(ParsedParam params, String key) {
+        if (getParam(params, key) == null) {
+            return false;
+        }
         String value = getParam(params, key);
         return value.equals("1") || Boolean.parseBoolean(value);
     }

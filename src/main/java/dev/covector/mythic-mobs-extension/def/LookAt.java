@@ -31,7 +31,7 @@ public class LookAt extends Ability {
         LivingEntity viewTargetMob = (LivingEntity) viewTarget;
 
         Location loc = targetMob.getLocation().clone();
-        Vector diffVec = viewTargetMob.getEyeLocation().subtract(targetMob.getLocation()).toVector().normalize();
+        Vector diffVec = viewTargetMob.getEyeLocation().subtract(targetMob.getEyeLocation()).toVector().normalize();
         loc.setDirection(diffVec);
         try {
             diffVec.checkFinite();

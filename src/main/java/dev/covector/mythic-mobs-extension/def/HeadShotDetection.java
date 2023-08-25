@@ -54,7 +54,7 @@ public class HeadShotDetection {
         babyMargin.put(EntityType.HOGLIN, 0.7);
     }
 
-    public static HeadShotResult isHeadShot(Entity entity, Vector hitLocation) {
+    public static HeadShotResult isHeadShot(Entity entity, Vector hitLocation, double extraMargin) {
         if (!(entity instanceof LivingEntity)) {
             return null;
         }
@@ -82,22 +82,22 @@ public class HeadShotDetection {
             entity.getType() == EntityType.SLIME ||
             entity.getType() == EntityType.MAGMA_CUBE
         ) {
-            return schemeCrawling(livingEntity, hitLocation);
+            return schemeCrawling(livingEntity, hitLocation, extraMargin);
         }
 
         // Y only scheme as livingEntity
-        return schemeYOnly(livingEntity, hitLocation);
+        return schemeYOnly(livingEntity, hitLocation, extraMargin);
     }
 
-    private static HeadShotResult schemeYOnly(LivingEntity entity, Vector hitLocation) {
-        double distance = Math.abs(entity.getEyeLocation().getY() - hitLocation.getY());
+    private static HeadShotResult schemeYOnly(LivingEntity entity, Vector hitLocation, double extraMargin) {
+        double distance = Math.max(0, Math.abs(entity.getEyeLocation().getY() - hitLocation.getY()) - extraMargin);
         return new HeadShotResult(distance < getMargin(entity) / 2, distance);
     }
 
-    private static HeadShotResult schemeCrawling(LivingEntity entity, Vector hitLocation) {
+    private static HeadShotResult schemeCrawling(LivingEntity entity, Vector hitLocation, double extraMargin) {
         double width = getMargin(entity) / 2;
         Location newHitBox = entity.getEyeLocation().clone().add(entity.getEyeLocation().getDirection().multiply(width));
-        double distance = newHitBox.toVector().distance(hitLocation);
+        double distance = Math.max(newHitBox.toVector().distance(hitLocation) - extraMargin, 0);
         return new HeadShotResult(distance < width, distance);
     }
 

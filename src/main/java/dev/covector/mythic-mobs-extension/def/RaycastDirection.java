@@ -7,15 +7,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.bukkit.Location;
 
+import java.util.Random;
+
 public class RaycastDirection extends Raycast {
-    private String syntax = "relative:<boolean> offsetYaw:<float> offsetPitch:<float>";
+    private String syntax = "relative:<boolean> offsetYaw:<float> offsetPitch:<float> inaccuracy:<float>";
     private String id = "raycastDirection";
+    private static Random random = new Random();
 
     public RaycastDirection() {
         super();
         setDefault("relative", "true");
         setDefault("offsetYaw", "0");
         setDefault("offsetPitch", "0");
+        setDefault("inaccuracy", "0");
     }
 
     public String cast(String[] args) {
@@ -35,8 +39,15 @@ public class RaycastDirection extends Raycast {
         }
         LivingEntity casterMob = (LivingEntity) caster;
         Location loc = getBoolean(parsedParam, "relative") ? casterMob.getEyeLocation().clone() : new Location(casterMob.getWorld(), 0, 0, 0, 0, 0);
-        loc.setYaw(Location.normalizeYaw(casterMob.getEyeLocation().getYaw() + getFloat(parsedParam, "offsetYaw")));
-        loc.setPitch(Location.normalizePitch(casterMob.getEyeLocation().getPitch() + getFloat(parsedParam, "offsetPitch")));
+        float yawOffset = 0;
+        float pitchOffset = 0;
+        float inaccuracy = getFloat(parsedParam, "inaccuracy");
+        if (inaccuracy > 0) {
+            yawOffset = random.nextFloat() * inaccuracy;
+            pitchOffset = random.nextFloat() * inaccuracy;
+        }
+        loc.setYaw(Location.normalizeYaw(casterMob.getEyeLocation().getYaw() + getFloat(parsedParam, "offsetYaw")) + yawOffset);
+        loc.setPitch(Location.normalizePitch(casterMob.getEyeLocation().getPitch() + getFloat(parsedParam, "offsetPitch")) + pitchOffset);
 
         return raycast(parsedParam, loc.getDirection());
     }
