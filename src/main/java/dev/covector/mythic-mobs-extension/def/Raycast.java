@@ -28,6 +28,7 @@ public abstract class Raycast extends DefaultParamAbility {
         setDefault("maxDistance", "20");
         setDefault("fluidCollisionMode", "NEVER");
         setDefault("ignorePassableBlocks", "true");
+        setDefault("hitEntityBehindWalls", "false");
         setDefault("sourceOffsetX", "0");
         setDefault("sourceOffsetY", "0");
         setDefault("sourceOffsetZ", "0");
@@ -52,6 +53,7 @@ public abstract class Raycast extends DefaultParamAbility {
         double maxDistance = getDouble(parsedParam, "maxDistance");
         FluidCollisionMode fluidCollisionMode = FluidCollisionMode.valueOf(getParam(parsedParam, "fluidCollisionMode"));
         boolean ignorePassableBlocks = getBoolean(parsedParam, "ignorePassableBlocks");
+        boolean hitEntityBehindWalls = getBoolean(parsedParam, "hitEntityBehindWalls");
         double sourceOffsetX = getDouble(parsedParam, "sourceOffsetX");
         double sourceOffsetY = getDouble(parsedParam, "sourceOffsetY");
         double sourceOffsetZ = getDouble(parsedParam, "sourceOffsetZ");
@@ -81,7 +83,10 @@ public abstract class Raycast extends DefaultParamAbility {
         boolean hasPiercingLeft = false;
         Entity[] hitEntities = new Entity[hitLimit];
         for (int i = 0; i < hitLimit; i++) {
-            RayTraceResult entityray = casterMob.getWorld().rayTraceEntities(
+
+            RayTraceResult entityray = null;
+            if (hitEntityBehindWalls) {
+                entityray = casterMob.getWorld().rayTraceEntities(
                 location,
                 direction,
                 maxDistance,
@@ -91,11 +96,29 @@ public abstract class Raycast extends DefaultParamAbility {
                     !(e instanceof ArmorStand || isInArray(hitEntities, e)) &&
                     (filterMode == FilterMode.ALL || (filterMode == FilterMode.PLAYER_ONLY && e instanceof Player) || (filterMode == FilterMode.NOT_PLAYER && !(e instanceof Player))))
                 );
+            } else {
+                entityray = casterMob.getWorld().rayTrace(
+                location,
+                direction,
+                maxDistance,
+                fluidCollisionMode,
+                ignorePassableBlocks,
+                raySize,
+                e -> (e instanceof LivingEntity &&
+                    !(e.getUniqueId().toString().equals(casterMob.getUniqueId().toString())) &&
+                    !(e instanceof ArmorStand || isInArray(hitEntities, e)) &&
+                    (filterMode == FilterMode.ALL || (filterMode == FilterMode.PLAYER_ONLY && e instanceof Player) || (filterMode == FilterMode.NOT_PLAYER && !(e instanceof Player))))
+                );
+            }
             if (entityray == null) {
                 hasPiercingLeft = true;
                 break;
             }
             Entity entity = entityray.getHitEntity();
+            if (entity == null) {
+                hasPiercingLeft = true;
+                break;
+            }
             hitEntities[i] = entity;
             hitSomething = true;
 

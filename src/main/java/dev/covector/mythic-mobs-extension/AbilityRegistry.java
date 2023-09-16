@@ -13,6 +13,7 @@ public class AbilityRegistry {
         add(new SetGlow());
         add(new LookAt());
         add(new Pumpkin());
+        add(new WardenSetTarget());
     }
 
     private void add(Ability ability) {

@@ -22,14 +22,18 @@ public class AbilityCommandInterface implements CommandExecutor {
         }
 
         Ability ab = registry.getAbility(args[0]);
-        if (ab == null) {
+        boolean silent = false;
+        if (args.length > 1 && args[1].equals("-s")) {
+            silent = true;
+        }
+        if (!silent && ab == null) {
             Bukkit.broadcastMessage("Ability " + args[0] + " not found!");
             return true;
         }
 
-        String[] argsList = Arrays.copyOfRange(args, 1, args.length);
+        String[] argsList = Arrays.copyOfRange(args, silent ? 2 : 1, args.length);
         String error = ab.cast(argsList);
-        if (error != null) {
+        if (!silent && error != null) {
             Bukkit.broadcastMessage("Failed to cast " + args[0]);
             Bukkit.broadcastMessage(error);
             Bukkit.broadcastMessage("Correct Syntax: /mmability " + args[0] + " " + ab.getSyntax());

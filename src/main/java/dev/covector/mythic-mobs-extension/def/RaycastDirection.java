@@ -43,8 +43,8 @@ public class RaycastDirection extends Raycast {
         float pitchOffset = 0;
         float inaccuracy = getFloat(parsedParam, "inaccuracy");
         if (inaccuracy > 0) {
-            yawOffset = random.nextFloat() * inaccuracy;
-            pitchOffset = random.nextFloat() * inaccuracy;
+            yawOffset = (float)(random.nextFloat() - 0.5) * inaccuracy * 2;
+            pitchOffset = (float)(random.nextFloat() - 0.5) * inaccuracy * 2;
         }
         loc.setYaw(Location.normalizeYaw(casterMob.getEyeLocation().getYaw() + getFloat(parsedParam, "offsetYaw")) + yawOffset);
         loc.setPitch(Location.normalizePitch(casterMob.getEyeLocation().getPitch() + getFloat(parsedParam, "offsetPitch")) + pitchOffset);
