@@ -1,4 +1,4 @@
-package dev.covector.maplus.mmextension;
+package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -8,6 +8,8 @@ import org.bukkit.util.Vector;
 import org.bukkit.Location;
 
 import dev.covector.maplus.fakepumpkin.FakePumpkin;
+import dev.covector.maplus.mmextension.Ability;
+import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class Pumpkin extends Ability {
     private String syntax = "<target-uuid> <toggle>";

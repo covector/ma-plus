@@ -1,4 +1,4 @@
-package dev.covector.maplus.mmextension;
+package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

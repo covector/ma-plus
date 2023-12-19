@@ -1,7 +1,6 @@
 package dev.covector.maplus.misc;
 
 import dev.covector.maplus.Utils;
-import dev.covector.maplus.misc.MLSkillCooldownReset;
 
 public class MiscManager {
     MLSkillCooldownReset skillCooldownReset = new MLSkillCooldownReset();

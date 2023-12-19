@@ -1,10 +1,14 @@
-package dev.covector.maplus.mmextension;
+package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
+
+import dev.covector.maplus.mmextension.Ability;
+import dev.covector.maplus.mmextension.MMExtUtils;
+
 import org.bukkit.Location;
 
 public class FlashBlind extends Ability {

@@ -1,17 +1,19 @@
-package dev.covector.maplus.mmextension;
+package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import dev.covector.maplus.mmextension.Ability;
+import dev.covector.maplus.mmextension.MMExtUtils;
 import net.Indyuce.mmocore.api.player.PlayerData;
 
 import java.util.UUID;
 
-public class ResetMana extends Ability {
-    private String syntax = "<player-uuid> [<mana> <ADD|SET>]?";
-    private String id = "resetMana";
+public class ResetStamina extends Ability {
+    private String syntax = "<player-uuid> [<stamina> <ADD|SET>]?";
+    private String id = "resetStamina";
 
     public String cast(String[] args) {
         if (args.length != 1 || args.length != 3) {
@@ -26,13 +28,13 @@ public class ResetMana extends Ability {
         
         PlayerData playerData = PlayerData.get(UUID.fromString(playerUUID));
         
-        double mana = args.length == 2 ? Double.parseDouble(args[1]) : playerData.getStats().getStat("MAX_MANA");
+        double stamina = args.length == 2 ? Double.parseDouble(args[1]) : playerData.getStats().getStat("MAX_STAMINA");
         
         if (args.length == 3) {
             String mode = args[2].toUpperCase();
             switch(mode) {
                 case "ADD":
-                    mana += playerData.getMana();
+                    stamina += playerData.getStamina();
                     break;
                 case "SET":
                     break;
@@ -41,7 +43,7 @@ public class ResetMana extends Ability {
             }
         }
         
-        playerData.setMana(mana);
+        playerData.setStamina(stamina);
 
         return null;
     }

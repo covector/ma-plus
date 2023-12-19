@@ -2,6 +2,8 @@ package dev.covector.maplus.mmextension;
 
 import java.util.HashMap;
 
+import dev.covector.maplus.mmextension.def.*;
+
 public class AbilityRegistry {
     HashMap<String, Ability> abilities = new HashMap<String, Ability>();
     

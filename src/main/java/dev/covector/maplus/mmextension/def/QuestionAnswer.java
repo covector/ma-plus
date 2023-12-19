@@ -1,4 +1,4 @@
-package dev.covector.maplus.mmextension;
+package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -19,6 +19,8 @@ import java.util.Random;
 import java.util.Set;
 
 import dev.covector.maplus.Utils;
+import dev.covector.maplus.mmextension.Ability;
+import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class QuestionAnswer extends Ability {
     private String syntax = "<caster-uuid> <min-complexity> <max-complexity> <base-time> <complexity-time-multiplier> <punishment-skill>";

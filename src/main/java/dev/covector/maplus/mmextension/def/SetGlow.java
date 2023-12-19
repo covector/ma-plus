@@ -1,4 +1,4 @@
-package dev.covector.maplus.mmextension;
+package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -8,6 +8,9 @@ import org.bukkit.util.Vector;
 import org.bukkit.Location;
 
 import org.inventivetalent.glow.GlowAPI;
+
+import dev.covector.maplus.mmextension.Ability;
+import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class SetGlow extends Ability {
     private String syntax = "<target-uuid> <observer-uuid> <chat-color>";
