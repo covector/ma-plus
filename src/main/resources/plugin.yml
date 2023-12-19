@@ -1,7 +1,7 @@
 main: dev.covector.maplus.MobArenaPlusPlugin
 name: MobArenaPlus
 version: 1.0
-softdepend: [MobArena, ajLeaderboards, MythicMobs, GlowAPI, ProtocolLib]
+softdepend: [MobArena, ajLeaderboards, MythicMobs, GlowAPI, ProtocolLib, MMOCore]
 
 commands:
    marevive:
@@ -10,3 +10,6 @@ commands:
    mmability:
       description: Extend mythic mobs abilities by using command interface
       usage: /<command> <ability-id> <arg1> <arg2> <arg3>...
+   mlcooldown:
+      description: Reset cooldown for mythic lib skill
+      usage: /<command>

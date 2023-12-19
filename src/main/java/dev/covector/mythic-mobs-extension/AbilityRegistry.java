@@ -14,6 +14,8 @@ public class AbilityRegistry {
         add(new LookAt());
         add(new Pumpkin());
         add(new WardenSetTarget());
+        add(new ResetStamina());
+        add(new ResetMana());
     }
 
     private void add(Ability ability) {

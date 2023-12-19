@@ -13,6 +13,7 @@ import dev.covector.maplus.leaderboardclear.*;
 import dev.covector.maplus.tridentnopickup.*;
 import dev.covector.maplus.mmextension.*;
 import dev.covector.maplus.fakepumpkin.*;
+import dev.covector.maplus.misc.*;
 
 public class MobArenaPlusPlugin extends JavaPlugin
 {
@@ -21,6 +22,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     private CLBListener clbListener;
     private TridentNoPickUpListener tridentNoPickUpListener;
     private AbilityCommandInterface abilityCommandInterface;
+    private MiscManager miscManager;
 
     @Override
     public void onEnable() {
@@ -54,6 +56,10 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // FAKE PUMPKIN
         FakePumpkin.getInstance().registerPacketListener();
+
+        // MISCELLANEOUS
+        miscManager = new MiscManager();
+        miscManager.register();
         
         getLogger().info("Mob Arena Plus Plugin Activated!");
     }
@@ -78,6 +84,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // FAKE PUMPKIN
         FakePumpkin.getInstance().unregisterPacketListener();
+
+        // MISCELLANEOUS
+        miscManager.unregister();
 
         getLogger().info("Mob Arena Plus Plugin Deactivated!");
     }
