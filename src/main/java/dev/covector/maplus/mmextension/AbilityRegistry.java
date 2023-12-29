@@ -18,6 +18,8 @@ public class AbilityRegistry {
         add(new WardenSetTarget());
         add(new ResetStamina());
         add(new ResetMana());
+        add(new EffectCleanse());
+        add(new MLCooldownReset());
     }
 
     private void add(Ability ability) {
