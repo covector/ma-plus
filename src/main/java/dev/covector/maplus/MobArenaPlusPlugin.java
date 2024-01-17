@@ -12,6 +12,7 @@ import dev.covector.maplus.revive.*;
 import dev.covector.maplus.leaderboardclear.*;
 import dev.covector.maplus.tridentnopickup.*;
 import dev.covector.maplus.mmextension.*;
+import dev.covector.maplus.packetfucker.PacketFucker;
 import dev.covector.maplus.fakepumpkin.*;
 import dev.covector.maplus.misc.*;
 
@@ -26,6 +27,12 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
     @Override
     public void onEnable() {
+        if (true) {
+            PacketFucker.getInstance().registerPacketListener();
+            Utils.setPlugin(this);
+            return;
+        }
+
         Plugin maplugin = getServer().getPluginManager().getPlugin("MobArena");
         if (maplugin == null) {
             getLogger().warning("MobArena Not Loaded!");
@@ -57,6 +64,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // FAKE PUMPKIN
         FakePumpkin.getInstance().registerPacketListener();
 
+        // PACKET FUCKER
+        // PacketFucker.getInstance().registerPacketListener();
+
         // MISCELLANEOUS
         miscManager = new MiscManager();
         miscManager.register();
@@ -66,6 +76,11 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
     @Override
     public void onDisable() {
+        if (true) {
+            PacketFucker.getInstance().unregisterPacketListener();
+            return;
+        }
+
         // REVIVE
         this.getCommand("marevive").setExecutor(null);
         reviverListener.unregister();
@@ -84,6 +99,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // FAKE PUMPKIN
         FakePumpkin.getInstance().unregisterPacketListener();
+
+        // PACKET FUCKER
+        // PacketFucker.getInstance().unregisterPacketListener();
 
         // MISCELLANEOUS
         miscManager.unregister();
