@@ -1,6 +1,7 @@
 package dev.covector.maplus.revive;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -57,6 +58,8 @@ public class Reviver {
         getArenaPlayers(arena).add(player);
         getSpecPlayers(arena).remove(player);
         player.teleport(arena.getRegion().getArenaWarp());
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setFoodLevel(20);
         restoreDeathState(arena, player);
     }
 

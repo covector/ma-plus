@@ -9,12 +9,12 @@ import io.lumine.mythic.lib.api.player.MMOPlayerData;
 import io.lumine.mythic.lib.player.cooldown.CooldownMap;
 
 public class MLCooldownReset extends Ability {
-    private String syntax = "<target-player> <skill-name-1>,<skill-name-2>,<skill-name-3>,...";
+    private String syntax = "<target-player> <skill-name-1>,<skill-name-2>,<skill-name-3>,... <success-mm-skill-callback>?";
     private String id = "mlCooldown";
 
     public String cast(String[] args) {
-        if (args.length != 2) {
-            return "args length must be 2";
+        if (args.length != 2 && args.length != 3) {
+            return "args length must be 2 or 3";
         }
         
         Entity target = MMExtUtils.parseUUID(args[0]);
@@ -27,7 +27,14 @@ public class MLCooldownReset extends Ability {
 
         CooldownMap cdm = MMOPlayerData.get(targetPlayer.getUniqueId()).getCooldownMap();
         for (String skill : skills) {
+            if (cdm.getCooldown(skill) == 0) {
+                continue;
+            }
+            
             cdm.resetCooldown(skill);
+            if (args.length == 3) {
+                MMExtUtils.castMMSkill(targetPlayer, args[2], targetPlayer, null);
+            }
         }
         
         return null;

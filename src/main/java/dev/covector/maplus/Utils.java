@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 
 public class Utils {
-    public static MobArena mobarena;
-    public static MobArenaPlusPlugin plugin;
+    private static MobArena mobarena;
+    private static MobArenaPlusPlugin plugin;
 
     public static void setMobArena(MobArena mobarena) {
         Utils.mobarena = mobarena;

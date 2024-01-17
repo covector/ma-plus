@@ -14,7 +14,7 @@ import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class EffectCleanse extends Ability {
-    private String syntax = "<target-uuid> <last-duration-tick>?";
+    private String syntax = "<target-uuid> <last-duration-tick> <success-mm-skill-callback>?";
     private String id = "effectCleanse";
 
     private static final PotionEffectType[] badEffects = {
@@ -29,10 +29,15 @@ public class EffectCleanse extends Ability {
             PotionEffectType.WITHER
     };
 
-    private static void cleanseEffect(LivingEntity entity) {
+    private static boolean cleanseEffect(LivingEntity entity) {
+        boolean cleansed = false;
         for (PotionEffectType type : badEffects) {
-            entity.removePotionEffect(type);
+            if (entity.hasPotionEffect(type)) {
+                entity.removePotionEffect(type);
+                cleansed = true;
+            }
         }
+        return cleansed;
     }
 
     private static boolean isBadEffect(PotionEffectType type) {
@@ -69,11 +74,12 @@ public class EffectCleanse extends Ability {
     }
 
     public String cast(String[] args) {
-        if (args.length != 2 && args.length != 1) {
-            return "args length must be 1 or 2";
+        if (args.length != 2 && args.length != 3) {
+            return "args length must be 2 or 3";
         }
 
         Entity target = MMExtUtils.parseUUID(args[0]);
+        int duration = Integer.parseInt(args[1]);
 
         if (!(target instanceof LivingEntity)) {
             return "target must be a living entity";
@@ -81,11 +87,14 @@ public class EffectCleanse extends Ability {
 
         LivingEntity targetMob = (LivingEntity) target;
         
-        cleanseEffect(targetMob);
+        boolean cleansed = cleanseEffect(targetMob);
 
-        if (args.length == 2) {
-            int duration = Integer.parseInt(args[1]);
+        if (duration > 0) {
             new CleanseContinuous(targetMob).runTaskLater(Utils.getPlugin(), duration);
+        }
+
+        if (args.length == 3 && cleansed) {
+            MMExtUtils.castMMSkill(targetMob, args[2], targetMob, null);
         }
 
         return null;
