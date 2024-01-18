@@ -3,6 +3,7 @@ package dev.covector.maplus.packetfucker.def;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -10,6 +11,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 
+import dev.covector.maplus.Utils;
 import dev.covector.maplus.packetfucker.PacketHandler;
 
 public class ChunkUnload extends PacketHandler {
@@ -39,14 +41,14 @@ public class ChunkUnload extends PacketHandler {
         PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.UNLOAD_CHUNK);
         packet.getIntegers().write(0, chunkLocation.x);
         packet.getIntegers().write(1, chunkLocation.z);
+        Bukkit.broadcastMessage(chunkLocation.x + " " + chunkLocation.z);
         safeSendPacket(player, packet);
     }
 
     @Override
     public void addPlayer(Player player) {
-        activePlayers.add(player.getUniqueId());
-        sendPacket(player);
         Chunk chunk = player.getLocation().getChunk();
         playerChunk.put(player.getUniqueId(), new ChunkLocation(chunk.getX(), chunk.getZ()));
+        sendPacket(player);
     }
 }

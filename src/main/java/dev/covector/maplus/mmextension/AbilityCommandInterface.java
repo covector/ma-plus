@@ -28,6 +28,7 @@ public class AbilityCommandInterface implements CommandExecutor {
         }
         if (!silent && ab == null) {
             Bukkit.broadcastMessage("Ability " + args[0] + " not found!");
+            Bukkit.broadcastMessage("Available abilities: " + registry.getAbilityIds().toString());
             return true;
         }
 

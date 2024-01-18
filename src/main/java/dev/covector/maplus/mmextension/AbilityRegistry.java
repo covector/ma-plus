@@ -1,6 +1,7 @@
 package dev.covector.maplus.mmextension;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import dev.covector.maplus.mmextension.def.*;
 
@@ -20,6 +21,7 @@ public class AbilityRegistry {
         add(new ResetMana());
         add(new EffectCleanse());
         add(new MLCooldownReset());
+        add(new PacketFuckers());
     }
 
     private void add(Ability ability) {
@@ -28,5 +30,9 @@ public class AbilityRegistry {
 
     public Ability getAbility(String id) {
         return abilities.get(id);
+    }
+
+    public Set<String> getAbilityIds() {
+        return abilities.keySet();
     }
 }

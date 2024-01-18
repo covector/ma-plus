@@ -3,6 +3,7 @@ package dev.covector.maplus.packetfucker;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -18,15 +19,19 @@ public abstract class PacketHandler {
     protected HashSet<UUID> activePlayers = new HashSet<>();
     private PacketListener packetListener;
     public PacketHandler() {
-        packetListener = new PacketAdapter(Utils.getPlugin(), getPacketTypes()) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                handlePacket(event);
-            }
-        };
+        if (getPacketTypes() != null) {
+            packetListener = new PacketAdapter(Utils.getPlugin(), getPacketTypes()) {
+                @Override
+                public void onPacketSending(PacketEvent event) {
+                    handlePacket(event);
+                }
+            };
+        }
     }
     public void registerPacketListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
+        if (getPacketTypes() != null) {
+            ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
+        }
         // send initial packet to all players online (temporary)
         for (Player player : Utils.getPlugin().getServer().getOnlinePlayers()) {
             addPlayer(player);
@@ -34,7 +39,9 @@ public abstract class PacketHandler {
         onRegister();
     }
     public void unregisterPacketListener() {
-        ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
+        if (getPacketTypes() != null) {
+            ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
+        }
         onUnregister();
     }
     public void addPlayer(Player player) {

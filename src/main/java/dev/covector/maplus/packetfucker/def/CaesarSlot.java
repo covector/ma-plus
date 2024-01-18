@@ -1,5 +1,7 @@
 package dev.covector.maplus.packetfucker.def;
 
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,22 +15,32 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import dev.covector.maplus.packetfucker.PacketHandler;
 
 public class CaesarSlot extends PacketHandler{
-    private static PacketType[] processPacketTypes = new PacketType[] { PacketType.Play.Server.SET_SLOT };
+    private static PacketType[] processPacketTypes = new PacketType[] { PacketType.Play.Server.SET_SLOT, PacketType.Play.Server.WINDOW_ITEMS };
     public PacketType[] getPacketTypes() {
         return processPacketTypes;
     }
 
     public void modifyPacket(Player receiver, PacketContainer packet) {
-        int slot = packet.getIntegers().read(2);
-        if (slot >= 36 && slot <= 44) {
-            int targtSlot = slot == 44 ? 0 : slot - 35;
-            packet.getItemModifier().write(0, receiver.getInventory().getItem(targtSlot));
+        if (packet.getType() == PacketType.Play.Server.SET_SLOT) {
+            int slot = packet.getIntegers().read(2);
+            if (slot >= 36 && slot <= 44) {
+                int targtSlot = slot == 44 ? 0 : slot - 35;
+                packet.getItemModifier().write(0, receiver.getInventory().getItem(targtSlot));
+            }
+        } else {
+            List<ItemStack> items = packet.getItemListModifier().read(0);
+            ItemStack temp = items.get(36);
+            for (int i = 36; i <= 43; i++) {
+                items.set(i, items.get(i+1));
+            }
+            items.set(44, temp);
+            packet.getItemListModifier().write(0, items);
         }
     }
 
     public void sendPacket(Player player) {
         for (int i = 36; i <= 44; i++) {
-            int targtSlot = i == 44 ? 0 : i - 35;
+            int targtSlot = hasPlayer(player) ? (i == 44 ? 0 : i - 35) : i - 36;
             PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
             
             packet.getIntegers().write(0, 0);

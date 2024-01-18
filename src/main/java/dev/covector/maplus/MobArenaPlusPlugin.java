@@ -28,8 +28,8 @@ public class MobArenaPlusPlugin extends JavaPlugin
     @Override
     public void onEnable() {
         if (true) {
-            PacketFucker.getInstance().registerPacketListener();
             Utils.setPlugin(this);
+            PacketFucker.getInstance().registerPacketListener();
             return;
         }
 

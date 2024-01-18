@@ -20,15 +20,18 @@ public class FastTimeCycle extends PacketHandler {
     }
 
     public void modifyPacket(Player receiver, PacketContainer packet) {
-        packet.getLongs().write(1, currentTime());
+        // packet.getLongs().write(1, currentTime());
+        packet.getLongs().write(1, time);
     }
 
-    private long currentTime() {
-        return System.currentTimeMillis() * 10 % 24000;
-    }
+    // private long currentTime() {
+    //     return System.currentTimeMillis() * 10 % 24000;
+    // }
+    private long time = 0; // avoid modulo
 
     public void sendPacket(Player player) {
-        sendPacket(player, currentTime());
+        // sendPacket(player, currentTime());
+        sendPacket(player, time);
     }
 
     public void sendPacket(Player player, long time) {
@@ -41,16 +44,24 @@ public class FastTimeCycle extends PacketHandler {
 
     @Override
     public void onRegister() {
-        BukkitRunnable timer = new BukkitRunnable() {
+        timer = new BukkitRunnable() {
             @Override
             public void run() {
-                long time = currentTime();
+                if (activePlayers.size() == 0) {
+                    return;
+                }
+
+                time += 1400;
+                if (time >= 24000) {
+                    time -= 24000;
+                }
+
                 for (UUID uuid : activePlayers) {
                     sendPacket(Bukkit.getPlayer(uuid), time);
                 }
             }
         };
-        timer.runTaskTimer(Utils.getPlugin(), 0, 2L);
+        timer.runTaskTimer(Utils.getPlugin(), 0, 1L);
     }
 
     @Override
