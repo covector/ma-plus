@@ -22,6 +22,8 @@ public class AbilityRegistry {
         add(new EffectCleanse());
         add(new MLCooldownReset());
         add(new PacketFuckers());
+        add(new FakeBorder());
+        add(new SineFloatAbility());
     }
 
     private void add(Ability ability) {

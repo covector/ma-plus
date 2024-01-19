@@ -25,7 +25,7 @@ public class CaesarSlot extends PacketHandler{
             int slot = packet.getIntegers().read(2);
             if (slot >= 36 && slot <= 44) {
                 int targtSlot = slot == 44 ? 0 : slot - 35;
-                packet.getItemModifier().write(0, receiver.getInventory().getItem(targtSlot));
+                packet.getItemModifier().write(0, airIfNull(receiver.getInventory().getItem(targtSlot)));
             }
         } else {
             List<ItemStack> items = packet.getItemListModifier().read(0);
@@ -46,10 +46,13 @@ public class CaesarSlot extends PacketHandler{
             packet.getIntegers().write(0, 0);
             packet.getIntegers().write(1, 0);
             packet.getIntegers().write(2, i);
-            packet.getItemModifier().write(0, player.getInventory().getItem(targtSlot));
+            packet.getItemModifier().write(0, airIfNull(player.getInventory().getItem(targtSlot)));
 
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            safeSendPacket(player, packet);
         }
-        
+    }
+
+    private ItemStack airIfNull(ItemStack item) {
+        return item == null ? new ItemStack(Material.AIR) : item;
     }
 }

@@ -22,6 +22,10 @@ public class Utils {
         return mobarena.getArenaMaster().getArenaWithName(name);
     }
 
+    public static Arena getFirstActiveArena() {
+        return mobarena.getArenaMaster().getArenas().stream().filter(arena -> arena.getPlayersInArena().size() > 0).findFirst().orElse(null);
+    }
+
     public static Arena getArenaWithPlayer(Player player) {
         return mobarena.getArenaMaster().getArenaWithPlayer(player);
     }

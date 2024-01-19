@@ -16,7 +16,7 @@ import dev.covector.maplus.Utils;
 import dev.covector.maplus.packetfucker.PacketHandler;
 
 public class SineFloat extends PacketHandler{
-    private static PacketType[] processPacketTypes = new PacketType[] { PacketType.Play.Server.POSITION, PacketType.Play.Server.ENTITY_TELEPORT };
+    private static PacketType[] processPacketTypes = new PacketType[] { PacketType.Play.Server.ENTITY_TELEPORT };
     public PacketType[] getPacketTypes() {
         return processPacketTypes;
     }

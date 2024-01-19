@@ -32,10 +32,10 @@ public abstract class PacketHandler {
         if (getPacketTypes() != null) {
             ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
         }
-        // send initial packet to all players online (temporary)
-        for (Player player : Utils.getPlugin().getServer().getOnlinePlayers()) {
-            addPlayer(player);
-        }
+        // send initial packet to all players online (for testing)
+        // for (Player player : Utils.getPlugin().getServer().getOnlinePlayers()) {
+        //     addPlayer(player);
+        // }
         onRegister();
     }
     public void unregisterPacketListener() {
@@ -59,7 +59,7 @@ public abstract class PacketHandler {
         PacketContainer packet = event.getPacket();
         Player receiver = event.getPlayer();
         if (!hasPlayer(receiver)) {
-            // return;
+            return;
         }
 
         packet = event.getPacket().deepClone();

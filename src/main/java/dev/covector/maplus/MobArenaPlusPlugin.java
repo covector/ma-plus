@@ -29,6 +29,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     public void onEnable() {
         if (true) {
             Utils.setPlugin(this);
+            this.getCommand("mmability").setExecutor(abilityCommandInterface = new AbilityCommandInterface());
             PacketFucker.getInstance().registerPacketListener();
             return;
         }
@@ -65,7 +66,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
         FakePumpkin.getInstance().registerPacketListener();
 
         // PACKET FUCKER
-        // PacketFucker.getInstance().registerPacketListener();
+        PacketFucker.getInstance().registerPacketListener();
 
         // MISCELLANEOUS
         miscManager = new MiscManager();
@@ -78,6 +79,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     public void onDisable() {
         if (true) {
             PacketFucker.getInstance().unregisterPacketListener();
+            this.getCommand("mmability").setExecutor(null);
             return;
         }
 
@@ -101,7 +103,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
         FakePumpkin.getInstance().unregisterPacketListener();
 
         // PACKET FUCKER
-        // PacketFucker.getInstance().unregisterPacketListener();
+        PacketFucker.getInstance().unregisterPacketListener();
 
         // MISCELLANEOUS
         miscManager.unregister();

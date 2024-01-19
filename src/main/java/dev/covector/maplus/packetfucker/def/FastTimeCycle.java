@@ -66,6 +66,7 @@ public class FastTimeCycle extends PacketHandler {
 
     @Override
     public void onUnregister() {
-        timer.cancel();
+        if (timer != null)
+            timer.cancel();
     }
 }

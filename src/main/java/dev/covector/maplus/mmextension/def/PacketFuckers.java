@@ -1,5 +1,8 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -21,6 +24,14 @@ public class PacketFuckers extends Ability {
         }
 
         Entity target = MMExtUtils.parseUUID(args[1]);
+
+        // Entity target;
+        // try {
+        //     target = Bukkit.getEntity(UUID.fromString(args[1]));
+        // } catch (IllegalArgumentException e) {
+        //     // testing on players
+        //     target =  Bukkit.getPlayer(args[1]);
+        // }
 
         if (!(target instanceof Player)) {
             return "target must be a player";

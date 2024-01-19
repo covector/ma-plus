@@ -16,9 +16,14 @@ import com.comphenix.protocol.events.PacketListener;
 import dev.covector.maplus.Utils;
 import dev.covector.maplus.packetfucker.def.CaesarSlot;
 import dev.covector.maplus.packetfucker.def.ChunkUnload;
+import dev.covector.maplus.packetfucker.def.ClearInv;
+import dev.covector.maplus.packetfucker.def.FakeDamage;
+import dev.covector.maplus.packetfucker.def.FakeDeath;
+import dev.covector.maplus.packetfucker.def.FakeRain;
 import dev.covector.maplus.packetfucker.def.FastTimeCycle;
 import dev.covector.maplus.packetfucker.def.GhostCage;
 import dev.covector.maplus.packetfucker.def.SineFloat;
+import dev.covector.maplus.packetfucker.def.SineFloatIndv;
 import dev.covector.maplus.packetfucker.def.WorldBorder;
 
 public class PacketFucker {
@@ -34,9 +39,14 @@ public class PacketFucker {
         packetHandlers.put("ghostCage", new GhostCage());
         packetHandlers.put("fastTime", new FastTimeCycle());
         packetHandlers.put("caesarSlot", new CaesarSlot());
-        // packetHandlers.put("chunkUnload", new ChunkUnload());
-        // packetHandlers.put("worldBorder", new WorldBorder());
+        packetHandlers.put("chunkUnload", new ChunkUnload());
+        packetHandlers.put("worldBorder", new WorldBorder());
         packetHandlers.put("sineFloat", new SineFloat());
+        packetHandlers.put("fakeDeath", new FakeDeath());
+        packetHandlers.put("clearInv", new ClearInv());
+        packetHandlers.put("fakeDamage", new FakeDamage());
+        packetHandlers.put("fakeRain", new FakeRain());
+        packetHandlers.put("sineFloatINDV", new SineFloatIndv());
     }
     public boolean hasHandler(String packetHandlerName) {
         return packetHandlers.containsKey(packetHandlerName);
@@ -78,6 +88,13 @@ public class PacketFucker {
             return false;
         }
         return packetHandlers.get(packetHandlerName).hasPlayer(player);
+    }
+
+    public PacketHandler getPacketHandler(String packetHandlerName) {
+        if (!packetHandlers.containsKey(packetHandlerName)) {
+            return null;
+        }
+        return packetHandlers.get(packetHandlerName);
     }
 
     public static PacketFucker getInstance() {

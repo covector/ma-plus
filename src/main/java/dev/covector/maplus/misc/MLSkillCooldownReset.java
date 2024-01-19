@@ -45,6 +45,8 @@ public class MLSkillCooldownReset  implements CommandExecutor {
             return false;
         }
 
+        sender.sendMessage(ChatColor.GREEN + "Skill cooldowns reset!");
+
         return true;
     }
 }

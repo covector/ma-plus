@@ -27,8 +27,6 @@ public class GhostCage extends PacketHandler {
         return processPacketTypes;
     }
 
-    private HashMap<UUID, Location> playerLocation = new HashMap<UUID, Location>();
-
     public void modifyPacket(Player receiver, PacketContainer packet) {
     }
 
@@ -48,7 +46,8 @@ public class GhostCage extends PacketHandler {
             createGhostBlockAt(location, -1, 1, 0),
             createGhostBlockAt(location, 0, 1, 1),
             createGhostBlockAt(location, 0, 1, -1),
-            createGhostBlockAt(location, 0, 2, 0)
+            createGhostBlockAt(location, 0, 2, 0),
+            createGhostBlockAt(location, 0, -1, 0)
         };
         ArrayList<MultiBlockChangePacket> mbcp = groupByChunk(bp);
         for (MultiBlockChangePacket multiBlockChangePacket : mbcp) {
@@ -115,7 +114,6 @@ public class GhostCage extends PacketHandler {
         Location location = player.getLocation().getBlock().getLocation().clone();
         // playerLocation.put(player.getUniqueId(), location);
         player.teleport(location.clone().add(0.5, 0, 0.5).setDirection(player.getLocation().getDirection()));
-        Bukkit.broadcastMessage(location.toString());
         sendPacket(player, location);
     }
 }

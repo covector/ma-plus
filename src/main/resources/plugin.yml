@@ -13,3 +13,6 @@ commands:
    mlcooldown:
       description: Reset cooldown for mythic lib skill
       usage: /<command>
+   tparenamobstoself:
+      description: Teleport arena mobs to yourself
+      usage: /<command>
