@@ -1,5 +1,6 @@
 package dev.covector.maplus.mmextension.def;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -42,7 +43,7 @@ public class EffectCleanse extends Ability {
 
     private static boolean isBadEffect(PotionEffectType type) {
         for (PotionEffectType badType : badEffects) {
-            if (type == badType) {
+            if (type.equals(badType)) {
                 return true;
             }
         }
@@ -54,12 +55,17 @@ public class EffectCleanse extends Ability {
 
         public CleanseContinuous(LivingEntity entity) {
             this.entity = entity;
+            Bukkit.getPluginManager().registerEvents(this, Utils.getPlugin());
         }
 
         @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
         public void a(EntityPotionEffectEvent e) {
+            if (!(e.getEntity() instanceof LivingEntity)) {
+                return;
+            }
+            LivingEntity livingEntity = (LivingEntity) e.getEntity();
             if (
-                e.getEntity() == entity &&
+                livingEntity == entity &&
                 e.getAction() == EntityPotionEffectEvent.Action.ADDED &&
                 isBadEffect(e.getNewEffect().getType())
             ) {

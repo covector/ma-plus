@@ -77,11 +77,11 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
     @Override
     public void onDisable() {
-        if (true) {
-            PacketFucker.getInstance().unregisterPacketListener();
-            this.getCommand("mmability").setExecutor(null);
-            return;
-        }
+        // if (true) {
+        //     PacketFucker.getInstance().unregisterPacketListener();
+        //     this.getCommand("mmability").setExecutor(null);
+        //     return;
+        // }
 
         // REVIVE
         this.getCommand("marevive").setExecutor(null);

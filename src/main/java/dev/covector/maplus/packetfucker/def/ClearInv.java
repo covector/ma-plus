@@ -64,6 +64,7 @@ public class ClearInv extends PacketHandler{
         for (int i = 36; i <= 44; i++) {
             items.add(airIfNull(player.getInventory().getItem(i - 36)));
         }
+        items.add(airIfNull(player.getInventory().getItemInOffHand()));
         return items;
     }
 

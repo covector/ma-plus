@@ -20,7 +20,7 @@ public class MLSkillCooldownReset  implements CommandExecutor {
 
     public MLSkillCooldownReset() {
         try {
-            coolDownMap = MMOPlayerData.class.getDeclaredField("map");
+            coolDownMap = CooldownMap.class.getDeclaredField("map");
             coolDownMap.setAccessible(true);
         } catch (NoSuchFieldException e) {
             Bukkit.broadcastMessage("Error: NoSuchFieldException");

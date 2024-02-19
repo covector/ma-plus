@@ -16,7 +16,7 @@ public class ResetStamina extends Ability {
     private String id = "resetStamina";
 
     public String cast(String[] args) {
-        if (args.length != 1 || args.length != 3) {
+        if (args.length != 1 && args.length != 3) {
             return "args length must be 1 or 3";
         }
 
@@ -26,7 +26,7 @@ public class ResetStamina extends Ability {
             return "entity must be a player";
         }
         
-        PlayerData playerData = PlayerData.get(UUID.fromString(playerUUID));
+        PlayerData playerData = PlayerData.get(entity.getUniqueId());
         
         double stamina = args.length == 2 ? Double.parseDouble(args[1]) : playerData.getStats().getStat("MAX_STAMINA");
         

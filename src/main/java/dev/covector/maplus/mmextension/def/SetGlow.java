@@ -31,9 +31,6 @@ public class SetGlow extends Ability {
         Player observerPlayer = (Player) observer;
 
         GlowAPI.setGlowing(target, color, observerPlayer);
-        if (color == null) {
-            observerPlayer.setGlowing(false);
-        }
 
         return null;
     }
