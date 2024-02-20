@@ -27,12 +27,12 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
     @Override
     public void onEnable() {
-        if (true) {
-            Utils.setPlugin(this);
-            this.getCommand("mmability").setExecutor(abilityCommandInterface = new AbilityCommandInterface());
-            PacketFucker.getInstance().registerPacketListener();
-            return;
-        }
+        // if (true) {
+        //     Utils.setPlugin(this);
+        //     this.getCommand("mmability").setExecutor(abilityCommandInterface = new AbilityCommandInterface());
+        //     PacketFucker.getInstance().registerPacketListener();
+        //     return;
+        // }
 
         Plugin maplugin = getServer().getPluginManager().getPlugin("MobArena");
         if (maplugin == null) {
@@ -80,6 +80,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // if (true) {
         //     PacketFucker.getInstance().unregisterPacketListener();
         //     this.getCommand("mmability").setExecutor(null);
+        //     Utils.destroyAll();
         //     return;
         // }
 
@@ -107,6 +108,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // MISCELLANEOUS
         miscManager.unregister();
+
+        // DESTRUCTORS
+        Utils.destroyAll();
 
         getLogger().info("Mob Arena Plus Plugin Deactivated!");
     }

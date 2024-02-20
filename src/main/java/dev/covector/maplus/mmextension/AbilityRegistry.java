@@ -24,6 +24,7 @@ public class AbilityRegistry {
         add(new PacketFuckers());
         add(new FakeBorder());
         add(new SineFloatAbility());
+        add(new Reach());
     }
 
     private void add(Ability ability) {
