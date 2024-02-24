@@ -18,6 +18,9 @@ public class FakeDamage extends PacketHandler {
     }
 
     public void sendPacket(Player player) {
+    }
+
+    public void sendDamagePacket(Player player) {
         PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.HURT_ANIMATION);
         packet.getIntegers().write(0, player.getEntityId());
         packet.getFloat().write(0, 0F);
@@ -26,6 +29,6 @@ public class FakeDamage extends PacketHandler {
 
     @Override
     public void addPlayer(Player player) {
-        sendPacket(player);
+        sendDamagePacket(player);
     }
 }

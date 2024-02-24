@@ -1,5 +1,8 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -10,6 +13,7 @@ import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 
 public class FlashBlind extends Ability {
     private String syntax = "<flashBang-uuid> <target-uuid> <angle-margin> <callback-skill>";
@@ -64,5 +68,13 @@ public class FlashBlind extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if ((argsList.length == 1 || argsList.length == 2) && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[argsList.length-1], (Player) sender);
+        }
+        
+        return Collections.emptyList();
     }
 }

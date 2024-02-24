@@ -1,14 +1,19 @@
 package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class RelativeVelocity extends Ability {
     private String syntax = "<mob-uuid> <vx> <vy> <vz> <SET|ADD> <global-y>";
@@ -60,5 +65,21 @@ public class RelativeVelocity extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+
+        if (argsList.length == 5) {
+            return MMExtUtils.streamFilter(Stream.of("SET", "ADD"), argsList[4]);
+        }
+
+        if (argsList.length == 6) {
+            return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[5]);
+        }
+
+        return Collections.emptyList();
     }
 }

@@ -1,5 +1,7 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,27 +20,27 @@ public abstract class Raycast extends DefaultParamAbility {
     private String syntax = "caster:<caster-uuid> onHitEntity:<entity-hit-callback-skill> onHeadShot:<headshot-callback-skill> onHitBlock:<block-hit-callback-skill> onHitNothing:<nothing-hit-callback-skill> hitBlockCenter:<boolean> hitAirOnMaxDistance:<boolean> hitBlockMode:<DEFAULT|EXCLUDE_ENTITY|ALWAYS> piercing:<int> raySize:<double> maxDistance:<double> fluidCollisionMode:<NEVER|SOURCE_ONLY|ALWAYS> ignorePassableBlocks:<boolean> sourceOffsetX:<double> sourceOffsetY:<double> sourceOffsetZ:<double> sourceOffsetGlobalY:<boolean> sourceOffsetXIgnorePitch:<boolean> sourceOffsetRelative:<boolean> filterMode:<ALL|PLAYER_ONLY|NOT_PLAYER> debug:<boolean>";
 
     public Raycast() {
-        setDefault("caster", null);
+        setDefault("caster", null, livingEntityTabOptions);
         setDefault("onHitEntity", null);
         setDefault("onHeadShot", null);
         setDefault("onHitBlock", null);
         setDefault("onHitNothing", null);
-        setDefault("hitBlockCenter", "false");
-        setDefault("hitAirOnMaxDistance", "false");
-        setDefault("hitBlockMode", "DEFAULT");
+        setDefault("hitBlockCenter", "false", booleanTabOptions);
+        setDefault("hitAirOnMaxDistance", "false", booleanTabOptions);
+        setDefault("hitBlockMode", "DEFAULT", List.of("DEFAULT", "EXCLUDE_ENTITY", "ALWAYS"));
         setDefault("piercing", "0");
         setDefault("raySize", "0");
         setDefault("maxDistance", "20");
-        setDefault("fluidCollisionMode", "NEVER");
-        setDefault("ignorePassableBlocks", "true");
-        setDefault("hitEntityBehindWalls", "false");
+        setDefault("fluidCollisionMode", "NEVER", List.of("NEVER", "SOURCE_ONLY", "ALWAYS"));
+        setDefault("ignorePassableBlocks", "true", booleanTabOptions);
+        setDefault("hitEntityBehindWalls", "false", booleanTabOptions);
         setDefault("sourceOffsetX", "0");
         setDefault("sourceOffsetY", "0");
         setDefault("sourceOffsetZ", "0");
-        setDefault("sourceOffsetGlobalY", "true");
-        setDefault("sourceOffsetXIgnorePitch", "false");
-        setDefault("sourceOffsetRelative", "true");
-        setDefault("filterMode", "ALL");
+        setDefault("sourceOffsetGlobalY", "true", booleanTabOptions);
+        setDefault("sourceOffsetXIgnorePitch", "false", booleanTabOptions);
+        setDefault("sourceOffsetRelative", "true", booleanTabOptions);
+        setDefault("filterMode", "ALL", List.of("ALL", "PLAYER_ONLY", "NOT_PLAYER"));
         // setDefault("headShotMargin", "0.5");
     }
 

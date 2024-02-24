@@ -1,5 +1,9 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -46,5 +50,13 @@ public class MLCooldownReset extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+        
+        return Collections.emptyList();
     }
 }

@@ -5,10 +5,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.HumanEntity;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class AbilityCommandInterface implements CommandExecutor {
+public class AbilityCommandInterface implements CommandExecutor, TabCompleter {
     private AbilityRegistry registry;
 
     public AbilityCommandInterface() {
@@ -40,5 +46,44 @@ public class AbilityCommandInterface implements CommandExecutor {
             Bukkit.broadcastMessage("Correct Syntax: /mmability " + args[0] + " " + ab.getSyntax());
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            return MMExtUtils.streamFilter(registry.getAbilityIds(), args[0]);
+        }
+
+        if (args.length > 2 && args[1].equals("-s")) {
+            Ability ab = registry.getAbility(args[0]);
+            if (ab != null) {
+                String[] argsList = Arrays.copyOfRange(args, 2, args.length);
+                return ab.getTabComplete(sender, argsList);
+            }
+            return Collections.emptyList();
+        }
+        
+        if (args.length == 2) {
+            Ability ab = registry.getAbility(args[0]);
+            if (ab != null) {
+                String[] argsList = Arrays.copyOfRange(args, 1, args.length);
+                return Stream.concat(
+                    ab.getTabComplete(sender, argsList).stream(),
+                    Stream.of("-s").filter(n -> "-s".startsWith(args[1]))
+                ).collect(Collectors.toList());
+            }
+            return Collections.emptyList();
+        }
+
+        if (args.length > 2) {
+            Ability ab = registry.getAbility(args[0]);
+            if (ab != null) {
+                String[] argsList = Arrays.copyOfRange(args, 1, args.length);
+                return ab.getTabComplete(sender, argsList);
+            }
+            return Collections.emptyList();
+        }
+
+        return Collections.emptyList();
     }
 }

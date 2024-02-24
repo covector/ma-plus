@@ -20,6 +20,9 @@ public class FakeDeath extends PacketHandler {
     }
 
     public void sendPacket(Player player) {
+    }
+
+    public void sendDeathPacket(Player player) {
         PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_COMBAT_KILL);
         packet.getIntegers().write(0, player.getEntityId());
         packet.getChatComponents().write(0, WrappedChatComponent.fromText("Title Screen > Respawn"));
@@ -28,6 +31,6 @@ public class FakeDeath extends PacketHandler {
 
     @Override
     public void addPlayer(Player player) {
-        sendPacket(player);
+        sendDeathPacket(player);
     }
 }

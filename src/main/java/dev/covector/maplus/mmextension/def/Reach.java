@@ -1,15 +1,19 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -153,5 +157,17 @@ public class Reach extends Ability implements Utils.Destructor {
         public double getReach(UUID uuid) {
             return playerReach.getOrDefault(uuid, 0D);
         }
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+
+        if (argsList.length == 2) {
+            return MMExtUtils.streamFilter(Stream.of("reset"), argsList[1]);
+        }
+
+        return Collections.emptyList();
     }
 }

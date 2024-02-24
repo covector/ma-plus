@@ -1,8 +1,13 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -112,5 +117,13 @@ public class EffectCleanse extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+        
+        return Collections.emptyList();
     }
 }

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.event.EventHandler;
@@ -15,12 +16,16 @@ import org.bukkit.ChatColor;
 
 import com.garbagemule.MobArena.framework.Arena;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import dev.covector.maplus.Utils;
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
+import dev.covector.maplus.packetfucker.PacketFucker;
 
 public class QuestionAnswer extends Ability {
     private String syntax = "<caster-uuid> <min-complexity> <max-complexity> <base-time> <complexity-time-multiplier> <punishment-skill>";
@@ -54,6 +59,14 @@ public class QuestionAnswer extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+
+        return Collections.emptyList();
     }
 
     private class Question extends BukkitRunnable implements Listener {

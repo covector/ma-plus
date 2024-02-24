@@ -1,8 +1,12 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -58,5 +62,17 @@ public class FakeBorder extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+
+        if (argsList.length == 2) {
+            return MMExtUtils.streamFilter(Stream.of("false"), argsList[1]);
+        }
+
+        return Collections.emptyList();
     }
 }

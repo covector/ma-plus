@@ -1,11 +1,17 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.inventivetalent.glow.GlowAPI;
 
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
@@ -66,5 +72,17 @@ public class SineFloatAbility extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if ((argsList.length == 1 || argsList.length == 2) && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[argsList.length-1], (Player) sender);
+        }
+
+        if (argsList.length == 3) {
+            return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[2]);
+        }
+        
+        return Collections.emptyList();
     }
 }

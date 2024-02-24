@@ -2,13 +2,18 @@ package dev.covector.maplus.mmextension;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.api.skills.Skill;
@@ -30,6 +35,37 @@ public class MMExtUtils {
             // testing on players
             return Bukkit.getPlayer(uuid);
         }
+    }
+
+    public static List<String> getLivingEntityTabComplete(String arg) {
+        return streamFilter(Bukkit.getOnlinePlayers().stream()
+            .map(HumanEntity::getName)
+            , arg);
+    }
+
+    public static List<String> getLivingEntityTabComplete(String arg, Player player) {
+        // also return uuid of closest non-player living entity
+        return streamFilter(Stream.concat(
+            Bukkit.getOnlinePlayers().stream()
+            .map(HumanEntity::getName),
+            player.getWorld().getNearbyEntities(player.getLocation(), 10, 10, 10).stream()
+                .filter(e -> e instanceof LivingEntity)
+                .sorted((e1, e2) -> {
+                    return (int) (e1.getLocation().distanceSquared(player.getLocation()) - e2.getLocation().distanceSquared(player.getLocation()));
+                })
+                .map(Entity::getUniqueId)
+                .map(UUID::toString)
+        ), arg);
+    }
+
+    public static List<String> streamFilter(Stream<String> list, String arg) {
+        return list
+            .filter(n -> n.toLowerCase().startsWith(arg.toLowerCase()))
+            .collect(Collectors.toList());
+    }
+
+    public static List<String> streamFilter(Set<String> list, String arg) {
+        return streamFilter(list.stream(), arg);
     }
 
     public static void castMMSkill(LivingEntity caster, String skillName, LivingEntity targetEntity, Location targetLoc) {

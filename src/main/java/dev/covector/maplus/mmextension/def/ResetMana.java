@@ -1,6 +1,7 @@
 package dev.covector.maplus.mmextension.def;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -9,7 +10,10 @@ import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 import net.Indyuce.mmocore.api.player.PlayerData;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class ResetMana extends Ability {
     private String syntax = "<player-uuid> [<mana> <ADD|SET>]?";
@@ -54,5 +58,17 @@ public class ResetMana extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+
+        if (argsList.length == 3) {
+            return MMExtUtils.streamFilter(Stream.of("SET", "ADD"), argsList[2]);
+        }
+
+        return Collections.emptyList();
     }
 }

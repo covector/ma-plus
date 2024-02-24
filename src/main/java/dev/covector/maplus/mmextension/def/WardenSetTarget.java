@@ -1,5 +1,8 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,6 +14,7 @@ import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 
 public class WardenSetTarget extends Ability {
     private String syntax = "<warden-uuid> <target-uuid>";
@@ -49,5 +53,13 @@ public class WardenSetTarget extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if ((argsList.length == 1 || argsList.length == 2) && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[argsList.length-1], (Player) sender);
+        }
+        
+        return Collections.emptyList();
     }
 }

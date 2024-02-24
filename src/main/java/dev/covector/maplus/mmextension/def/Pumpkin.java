@@ -1,18 +1,24 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 
 import dev.covector.maplus.fakepumpkin.FakePumpkin;
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
+import dev.covector.maplus.packetfucker.PacketFucker;
 
 public class Pumpkin extends Ability {
-    private String syntax = "<target-uuid> <toggle>";
+    private String syntax = "<target-uuid> <toggle>?";
     private String id = "fakePumpkin";
 
     public String cast(String[] args) {
@@ -44,5 +50,17 @@ public class Pumpkin extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
+        }
+
+        if (argsList.length == 2) {
+            return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[1]);
+        }
+
+        return Collections.emptyList();
     }
 }

@@ -19,7 +19,7 @@ public class RaycastDirection extends Raycast {
 
     public RaycastDirection() {
         super();
-        setDefault("relative", "true");
+        setDefault("relative", "true", booleanTabOptions);
         setDefault("offsetYaw", "0");
         setDefault("offsetPitch", "0");
         setDefault("inaccuracy", "0");

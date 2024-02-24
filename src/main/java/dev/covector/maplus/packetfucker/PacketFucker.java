@@ -97,6 +97,12 @@ public class PacketFucker {
         return packetHandlers.get(packetHandlerName);
     }
 
+    public void clearForPlayer(Player player) {
+        for (PacketHandler packetHandler : packetHandlers.values()) {
+            packetHandler.removePlayer(player);
+        }
+    }
+    
     public static PacketFucker getInstance() {
         if (instance == null) {
             instance = new PacketFucker();

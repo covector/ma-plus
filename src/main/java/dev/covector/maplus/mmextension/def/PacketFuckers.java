@@ -1,8 +1,13 @@
 package dev.covector.maplus.mmextension.def;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -11,7 +16,7 @@ import dev.covector.maplus.mmextension.MMExtUtils;
 import dev.covector.maplus.packetfucker.PacketFucker;
 
 public class PacketFuckers extends Ability {
-    private String syntax = "<handler-name> <target-uuid> <toggle>?";
+    private String syntax = "<handler-name> <target-uuid> <toggle>? OR clear <target-uuid>";
     private String id = "packetFuckers";
 
     public String cast(String[] args) {
@@ -19,7 +24,7 @@ public class PacketFuckers extends Ability {
             return "args length must be 2 or 3";
         }
 
-        if (!PacketFucker.getInstance().hasHandler(args[0])) {
+        if (!args[0].equalsIgnoreCase("clear") && !PacketFucker.getInstance().hasHandler(args[0])) {
             return "handler " + args[0] + " does not exist. Available handlers: " + PacketFucker.getInstance().getAllHandlerNames().toString();
         }
 
@@ -39,7 +44,12 @@ public class PacketFuckers extends Ability {
 
         Player player = (Player) target;
 
-        boolean toggle = args.length == 3 ? Boolean.parseBoolean(args[2]) : !PacketFucker.getInstance().hasPlayer(player, args[0]);
+        if (args[0].equalsIgnoreCase("clear")) {
+            PacketFucker.getInstance().clearForPlayer(player);
+            return null;
+        }
+
+        boolean toggle = args.length == 3 ? Boolean.parseBoolean(args[2].toLowerCase()) : !PacketFucker.getInstance().hasPlayer(player, args[0]);
 
         if (toggle) {
             PacketFucker.getInstance().addPlayer(player, args[0]);
@@ -55,5 +65,26 @@ public class PacketFuckers extends Ability {
 
     public String getId() {
         return id;
+    }
+
+    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
+        if (argsList.length == 1) {
+            return MMExtUtils.streamFilter(
+                Stream.concat(
+                    PacketFucker.getInstance().getAllHandlerNames().stream(),
+                    Stream.of("clear")
+                )
+            , argsList[0]);
+        }
+
+        if (argsList.length == 2 && sender instanceof Player) {
+            return MMExtUtils.getLivingEntityTabComplete(argsList[1], (Player) sender);
+        }
+
+        if (argsList.length == 3 && !argsList[0].equalsIgnoreCase("clear")) {
+            return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[2]);
+        }
+
+        return Collections.emptyList();
     }
 }

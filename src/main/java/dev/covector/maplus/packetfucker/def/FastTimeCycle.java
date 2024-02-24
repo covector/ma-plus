@@ -31,7 +31,7 @@ public class FastTimeCycle extends PacketHandler {
 
     public void sendPacket(Player player) {
         // sendPacket(player, currentTime());
-        sendPacket(player, time);
+        sendPacket(player, hasPlayer(player) ? time : player.getWorld().getTime());
     }
 
     public void sendPacket(Player player, long time) {
