@@ -1,7 +1,7 @@
 main: dev.covector.maplus.MobArenaPlusPlugin
 name: MobArenaPlus
 version: 1.0
-softdepend: [MobArena, ajLeaderboards, MythicMobs, GlowAPI, ProtocolLib, MMOCore]
+softdepend: [MobArena, ajLeaderboards, MythicMobs, GlowAPI, ProtocolLib, MMOCore, MMOItems]
 
 commands:
    marevive:
@@ -15,4 +15,8 @@ commands:
       usage: /<command>
    tparenamobstoself:
       description: Teleport arena mobs to yourself
+      usage: /<command>
+   unsocketgems:
+      description: Unsocket all gemstones from the MMOItems in hand
+      aliases: [unsocket, unsocketgem, unsocketgems, unsocketgemstone, unsocketgemstones]
       usage: /<command>
