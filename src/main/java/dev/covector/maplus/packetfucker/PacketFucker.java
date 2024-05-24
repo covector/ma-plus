@@ -39,7 +39,7 @@ public class PacketFucker {
         packetHandlers.put("ghostCage", new GhostCage());
         packetHandlers.put("fastTime", new FastTimeCycle());
         packetHandlers.put("caesarSlot", new CaesarSlot());
-        packetHandlers.put("chunkUnload", new ChunkUnload());
+        // packetHandlers.put("chunkUnload", new ChunkUnload());
         packetHandlers.put("worldBorder", new WorldBorder());
         packetHandlers.put("sineFloat", new SineFloat());
         packetHandlers.put("fakeDeath", new FakeDeath());
