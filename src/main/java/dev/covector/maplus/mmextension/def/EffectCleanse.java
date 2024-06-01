@@ -124,6 +124,6 @@ public class EffectCleanse extends Ability {
             return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
         }
         
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

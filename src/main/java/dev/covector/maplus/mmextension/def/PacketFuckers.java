@@ -85,6 +85,6 @@ public class PacketFuckers extends Ability {
             return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[2]);
         }
 
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

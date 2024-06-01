@@ -168,6 +168,6 @@ public class Reach extends Ability implements Utils.Destructor {
             return MMExtUtils.streamFilter(Stream.of("reset"), argsList[1]);
         }
 
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

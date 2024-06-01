@@ -80,6 +80,6 @@ public class RelativeVelocity extends Ability {
             return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[5]);
         }
 
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

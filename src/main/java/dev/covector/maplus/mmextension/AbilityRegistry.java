@@ -25,6 +25,7 @@ public class AbilityRegistry {
         add(new FakeBorder());
         add(new SineFloatAbility());
         add(new Reach());
+        add(new BombDefuse());
     }
 
     private void add(Ability ability) {

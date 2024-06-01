@@ -1,6 +1,7 @@
 main: dev.covector.maplus.MobArenaPlusPlugin
 name: MobArenaPlus
 version: 1.0
+api-version: 1.13
 softdepend: [MobArena, ajLeaderboards, MythicMobs, GlowAPI, ProtocolLib, MMOCore, MMOItems]
 
 commands:

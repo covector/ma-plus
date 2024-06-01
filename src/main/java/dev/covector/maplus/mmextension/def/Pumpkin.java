@@ -61,6 +61,6 @@ public class Pumpkin extends Ability {
             return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[1]);
         }
 
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

@@ -60,6 +60,6 @@ public class WardenSetTarget extends Ability {
             return MMExtUtils.getLivingEntityTabComplete(argsList[argsList.length-1], (Player) sender);
         }
         
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

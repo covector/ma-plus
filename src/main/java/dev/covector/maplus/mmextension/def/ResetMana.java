@@ -69,6 +69,6 @@ public class ResetMana extends Ability {
             return MMExtUtils.streamFilter(Stream.of("SET", "ADD"), argsList[2]);
         }
 
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }

@@ -61,6 +61,6 @@ public class SetGlow extends Ability {
             , argsList[2]);
         }
         
-        return Collections.emptyList();
+        return super.getTabComplete(sender, argsList);
     }
 }
