@@ -9,6 +9,7 @@ import com.garbagemule.MobArena.MobArena;
 import us.ajg0702.leaderboards.LeaderboardPlugin;
 
 import dev.covector.maplus.revive.*;
+import dev.covector.maplus.statsfix.StatsFixListener;
 import dev.covector.maplus.leaderboardclear.*;
 import dev.covector.maplus.tridentnopickup.*;
 import dev.covector.maplus.mmextension.*;
@@ -23,6 +24,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     private CLBListener clbListener;
     private TridentNoPickUpListener tridentNoPickUpListener;
     private AbilityCommandInterface abilityCommandInterface;
+    private StatsFixListener statsFixListener;
     private MiscManager miscManager;
 
     @Override
@@ -68,6 +70,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // PACKET FUCKER
         PacketFucker.getInstance().registerPacketListener();
 
+        // STATS FIX
+        (statsFixListener = new StatsFixListener()).register();
+
         // MISCELLANEOUS
         miscManager = new MiscManager();
         miscManager.register();
@@ -105,6 +110,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // PACKET FUCKER
         PacketFucker.getInstance().unregisterPacketListener();
+
+        // STATS FIX
+        statsFixListener.unregister();
 
         // MISCELLANEOUS
         miscManager.unregister();

@@ -21,6 +21,10 @@ public class Utils {
         Utils.plugin = plugin;
     }
 
+    public static MobArena getMobArena() {
+        return mobarena;
+    }
+
     public static Arena getArena(String name) {
         return mobarena.getArenaMaster().getArenaWithName(name);
     }
