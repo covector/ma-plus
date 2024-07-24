@@ -49,7 +49,7 @@ public class MMExtUtils {
             Bukkit.getOnlinePlayers().stream()
             .map(HumanEntity::getName),
             player.getWorld().getNearbyEntities(player.getLocation(), 10, 10, 10).stream()
-                .filter(e -> e instanceof LivingEntity)
+                .filter(e -> e instanceof LivingEntity && !(e.getUniqueId().toString().equals(player.getUniqueId().toString())))
                 .sorted((e1, e2) -> {
                     return (int) (e1.getLocation().distanceSquared(player.getLocation()) - e2.getLocation().distanceSquared(player.getLocation()));
                 })

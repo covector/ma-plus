@@ -1,6 +1,7 @@
 package dev.covector.maplus;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import com.garbagemule.MobArena.MobArena;
@@ -12,6 +13,7 @@ public class Utils {
     private static MobArena mobarena;
     private static MobArenaPlusPlugin plugin;
     private static ArrayList<Destructor> destructors = new ArrayList<>();
+    public static Random random = new Random();
 
     public static void setMobArena(MobArena mobarena) {
         Utils.mobarena = mobarena;

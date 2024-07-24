@@ -26,6 +26,8 @@ public class AbilityRegistry {
         add(new SineFloatAbility());
         add(new Reach());
         add(new BombDefuse());
+        add(new Disorient());
+        add(new CompassTrack());
     }
 
     private void add(Ability ability) {

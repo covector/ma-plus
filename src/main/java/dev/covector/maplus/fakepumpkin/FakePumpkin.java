@@ -57,7 +57,7 @@ public class FakePumpkin {
                     // Bukkit.broadcastMessage("item: " + item.getType().toString());
 
                     if (slot == 5) {
-                        item = new ItemStack(Material.PUMPKIN);
+                        item = new ItemStack(Material.CARVED_PUMPKIN);
                     }
 
                     packet.getItemModifier().write(0, item);
@@ -73,7 +73,7 @@ public class FakePumpkin {
             packet.getIntegers().write(0, 0); // window id
             packet.getIntegers().write(1, 0); // state id, idk if need to be correct, seems like using 0 works
             packet.getIntegers().write(2, 5); // slot
-            packet.getItemModifier().write(0, hasPumpkin(player) ? new ItemStack(Material.PUMPKIN) : player.getInventory().getHelmet());
+            packet.getItemModifier().write(0, hasPumpkin(player) ? new ItemStack(Material.CARVED_PUMPKIN) : player.getInventory().getHelmet());
 
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
         } catch (Exception e) {

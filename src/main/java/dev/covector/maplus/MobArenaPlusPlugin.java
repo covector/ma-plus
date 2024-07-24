@@ -16,6 +16,8 @@ import dev.covector.maplus.mmextension.*;
 import dev.covector.maplus.packetfucker.PacketFucker;
 import dev.covector.maplus.fakepumpkin.*;
 import dev.covector.maplus.misc.*;
+import dev.covector.maplus.mmapihook.MMApiHook;
+import dev.covector.maplus.mmapihook.mechanics.TempBlockManager;
 
 public class MobArenaPlusPlugin extends JavaPlugin
 {
@@ -25,6 +27,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     private TridentNoPickUpListener tridentNoPickUpListener;
     private AbilityCommandInterface abilityCommandInterface;
     private StatsFixListener statsFixListener;
+    private MMApiHook mmApiHook;
     private MiscManager miscManager;
 
     @Override
@@ -73,6 +76,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // STATS FIX
         (statsFixListener = new StatsFixListener()).register();
 
+        // MYTHIC MOBS API HOOK
+        (mmApiHook = new MMApiHook()).register();
+
         // MISCELLANEOUS
         miscManager = new MiscManager();
         miscManager.register();
@@ -104,7 +110,6 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // MYTHIC MOBS EXTENSION
         this.getCommand("mmability").setExecutor(null);
 
-
         // FAKE PUMPKIN
         FakePumpkin.getInstance().unregisterPacketListener();
 
@@ -113,6 +118,10 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // STATS FIX
         statsFixListener.unregister();
+
+        // MYTHIC MOBS API HOOK
+        mmApiHook.unregister();
+        TempBlockManager.removeAllBlocks();
 
         // MISCELLANEOUS
         miscManager.unregister();

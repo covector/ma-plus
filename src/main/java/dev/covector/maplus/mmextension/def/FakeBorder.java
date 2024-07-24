@@ -73,6 +73,6 @@ public class FakeBorder extends Ability {
             return MMExtUtils.streamFilter(Stream.of("false"), argsList[1]);
         }
 
-        return super.getTabComplete(sender, argsList);
+        return argsList.length <= 4 ? super.getTabComplete(sender, argsList) : Collections.emptyList();
     }
 }
