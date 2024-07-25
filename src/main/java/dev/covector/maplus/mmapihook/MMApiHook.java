@@ -45,6 +45,9 @@ public class MMApiHook implements Listener{
 		if (event.getConditionName().equalsIgnoreCase("ISCHILDFIX")) {
 			event.register(new IsChildFix(event.getConfig()));
 		}
+		if (event.getConditionName().equalsIgnoreCase("ISSOLID")) {
+			event.register(new IsSolid(event.getConfig()));
+		}
 	}
 	
 
