@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -56,10 +55,9 @@ public class TempBlockManager {
         if (policy == ReplacePolicy.FIRST && block != null && block.priority == priority) { return; }
         if (policy == ReplacePolicy.LONGER && block != null && block.priority == priority && block.getTimeLeft() > duration) { return; }
 
-        boolean clump = false;
-        if (duration > 0 && timerClumper.shouldClump(location, duration)) {
+        UUID clumpId = duration > 0 ? timerClumper.shouldClump(location, duration) : null;
+        if (clumpId != null) {
             duration = 0;
-            clump = true;
         }
 
         ArrayList<Location> connectedBlocks = new ArrayList<>();
@@ -97,8 +95,8 @@ public class TempBlockManager {
 
         setBlockSingle(block, blockType, location, policy, duration, priority);
 
-        if (clump) {
-            blocks.get(location).inBatch = true;
+        if (clumpId != null) {
+            blocks.get(location).batchId = clumpId;
         }
 
         if (connectedBlocks.size() > 0) {
@@ -107,15 +105,18 @@ public class TempBlockManager {
     }
 
     private static void setBlockSingle(TempBlock block, Material blockType, Location location, ReplacePolicy policy, int duration, int priority) {
+        TempBlock tb;
         if (block != null) {
             block.cancelTimer();
-            blocks.put(location, new TempBlock(location, block.originalBlockType, block.originalBlockData, block.originalBlockState, blockType, duration, priority));
+            tb = new TempBlock(location, block.originalBlockType, block.originalBlockData, block.originalBlockState, blockType, duration, priority);
         } else {
-            blocks.put(location, new TempBlock(location, location.getBlock(), blockType, duration, priority));
+            tb = new TempBlock(location, location.getBlock(), blockType, duration, priority);
         }
+        blocks.put(location, tb);
+
         ItemFrame frame = getItemFrame(location);
         if (frame != null) {
-            blocks.get(location).setItemFrameData(frame);
+            tb.setItemFrameData(frame);
             frame.remove();
         }
     }
@@ -168,7 +169,8 @@ public class TempBlockManager {
         private List<Location> connectedBlocks = new ArrayList<>();
         private ItemFrameData itemFrameData = null;
         public boolean hasParent = false;
-        public boolean inBatch = false;
+        public UUID batchId = null;
+        private ItemStack[] inventory = null;
         private class ItemFrameData {
             public ItemStack item;
             public BlockFace face;
@@ -326,18 +328,17 @@ public class TempBlockManager {
             }
 
             // container blockstate
-            // if (originalBlockState instanceof Container) {
-            //     Container container = (Container) originalBlockState;
-            //     Container c = (Container) location.getBlock().getState();
-            //     c.getInventory().setContents(container.getSnapshotInventory().getContents().clone());
-            //     c.update();
-            // }
+            if (originalBlockState instanceof Container) {
+                Container container = (Container) originalBlockState;
+                Container c = (Container) location.getBlock().getState();
+                c.getInventory().setContents(container.getSnapshotInventory().getContents());
+            }
 
             // big drip leaf blockdata
             if (originalBlockData instanceof BigDripleaf) {
                 BigDripleaf bigDripleaf = (BigDripleaf) originalBlockData;
                 BigDripleaf b1 = (BigDripleaf) Bukkit.createBlockData(originalBlockType);
-                b1.setTilt(bigDripleaf.getTilt());
+                b1.setFacing(bigDripleaf.getFacing());
                 location.getBlock().setBlockData(b1);
             }
 
@@ -459,7 +460,7 @@ public class TempBlockManager {
         public Location parentTempBlock = null;
         private BatchRestoreBlock batchRestoreBlock = null;
         private HashMap<UUID, BatchRestoreBlock> batchRestoreBlocks = new HashMap<>();
-        public boolean shouldClump(Location location, int duration) {
+        public UUID shouldClump(Location location, int duration) {
             if (parentTempBlock != null && System.currentTimeMillis() - this.lastTime < 50) {
                 TempBlock tb = TempBlockManager.blocks.get(parentTempBlock);
                 if (tb != null && tb.duration == duration) {
@@ -470,13 +471,13 @@ public class TempBlockManager {
                         batchRestoreBlocks.put(batchRestoreBlock.uuid, batchRestoreBlock);
                     }
                     batchRestoreBlock.addLocation(location);
-                    return true;
+                    return batchRestoreBlock.uuid;
                 }
             }
             this.lastTime = System.currentTimeMillis();
             this.parentTempBlock = location;
             batchRestoreBlock = null;
-            return false;
+            return null;
         }
         public void removeAll() {
             for (BatchRestoreBlock brb : batchRestoreBlocks.values()) {
@@ -494,7 +495,7 @@ public class TempBlockManager {
                 TempBlock tb = TempBlockManager.blocks.get(location);
                 if (tb != null) {
                     tb.cancelTimer();
-                    tb.inBatch = true;
+                    tb.batchId = this.uuid;
                 }
             }
             public void addLocation(Location location) {
@@ -503,7 +504,7 @@ public class TempBlockManager {
             public void run() {
                 for (Location location : this.locations) {
                     TempBlock block = TempBlockManager.blocks.get(location);
-                    if (block != null && block.inBatch) {
+                    if (block != null && this.uuid.equals(block.batchId)) {
                         block.setBlock(location);
                         TempBlockManager.blocks.remove(location);
                         block.restoreConnectedBlocks();
