@@ -18,12 +18,12 @@ import dev.covector.maplus.mmextension.MMExtUtils;
 import dev.covector.maplus.packetfucker.PacketFucker;
 
 public class Pumpkin extends Ability {
-    private String syntax = "<target-uuid> <toggle>?";
+    private String syntax = "<target-uuid> <alt-blur-index>? <toggle>?";
     private String id = "fakePumpkin";
 
     public String cast(String[] args) {
-        if (args.length != 2 && args.length != 1) {
-            return "args length must be 2 or 1";
+        if (args.length != 3 && args.length != 2 && args.length != 1) {
+            return "args length must be between 1 to 3";
         }
 
         Entity target = MMExtUtils.parseUUID(args[0]);
@@ -34,10 +34,21 @@ public class Pumpkin extends Ability {
 
         Player player = (Player) target;
 
-        boolean toggle = args.length == 2 ? args[1].equals("true") || args[1].equals("1") : !FakePumpkin.getInstance().hasPumpkin(player);
+        int altBlurInd = -1;
+        if (args.length >= 2) {
+            try {
+                altBlurInd = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+            }
+
+        }
+        boolean toggle = (args.length == 3 || (args.length == 2 && altBlurInd == -1)) ?
+            (args.length == 3 ? args[2] : args[1]).equalsIgnoreCase("true") :
+            !FakePumpkin.getInstance().hasPumpkin(player);
+        altBlurInd = altBlurInd == -1 ? 0 : altBlurInd; 
 
         if (toggle) {
-            FakePumpkin.getInstance().applyPumpkin(player);
+            FakePumpkin.getInstance().applyPumpkin(player, altBlurInd);
         } else {
             FakePumpkin.getInstance().removePumpkin(player);
         }
@@ -59,6 +70,14 @@ public class Pumpkin extends Ability {
 
         if (argsList.length == 2) {
             return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[1]);
+        }
+
+        if (argsList.length == 3) {
+            try {
+                Integer.parseInt(argsList[1]);
+                return MMExtUtils.streamFilter(Stream.of("true", "false"), argsList[2]);
+            } catch (NumberFormatException e) {
+            }
         }
 
         return super.getTabComplete(sender, argsList);
