@@ -32,7 +32,7 @@ public class ResetStamina extends Ability {
         
         PlayerData playerData = PlayerData.get(entity.getUniqueId());
         
-        double stamina = args.length == 2 ? Double.parseDouble(args[1]) : playerData.getStats().getStat("MAX_STAMINA");
+        double stamina = args.length == 1 ? playerData.getStats().getStat("MAX_STAMINA") : Double.parseDouble(args[1]);
         
         if (args.length == 3) {
             String mode = args[2].toUpperCase();

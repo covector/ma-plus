@@ -8,8 +8,10 @@ import org.bukkit.inventory.Inventory;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.ArenaImpl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Random;
 
@@ -55,6 +57,9 @@ public class Reviver {
     }
 
     public void revivePlayer(Arena arena, Player player) {
+        if (!getSpecPlayers(arena).contains(player)) {
+            return;
+        }
         getArenaPlayers(arena).add(player);
         getSpecPlayers(arena).remove(player);
         player.teleport(arena.getRegion().getArenaWarp());
@@ -76,25 +81,30 @@ public class Reviver {
     }
 
     public void reviveRandomPlayer(Arena arena) {
-        Set<Player> specPlayers = getSpecPlayers(arena);
-        if (specPlayers.size() == 0) {
-            return;
-        }
-        Player player = (Player)specPlayers.toArray()[rand.nextInt(specPlayers.size())];
+        Player player = getOnlineRandomSpecPlayer(arena);
         revivePlayer(arena, player);
     }
 
     public void reviveRandomPlayer(Arena arena, String callbackSkill) {
-        Set<Player> specPlayers = getSpecPlayers(arena);
-        if (specPlayers.size() == 0) {
-            return;
-        }
-        Player player = (Player)specPlayers.toArray()[rand.nextInt(specPlayers.size())];
+        Player player = getOnlineRandomSpecPlayer(arena);
         revivePlayer(arena, player, callbackSkill);
     }
 
+    private Player getOnlineRandomSpecPlayer(Arena arena) {
+        ArrayList<Player> candidates = new ArrayList<Player>();
+        for (Player player : getSpecPlayers(arena)) {
+            if (player.isOnline()) {
+                candidates.add(player);
+            }
+        }
+        if (candidates.size() == 0) {
+            return null;
+        }
+        return candidates.get(rand.nextInt(candidates.size()));
+    }
+
     public boolean canRevivePlayer(Arena arena, Player player) {
-        return getSpecPlayers(arena).contains(player);
+        return getSpecPlayers(arena).contains(player) && player.isOnline();
     }
 
     public void saveDeathState(Arena arena, Player player, int deathWave) {

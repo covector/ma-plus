@@ -1,5 +1,7 @@
 package dev.covector.maplus.mmapihook.mechanics;
 
+import java.io.File;
+
 import org.bukkit.Material;
 
 import io.lumine.mythic.api.adapters.AbstractLocation;
@@ -7,20 +9,27 @@ import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.ITargetedLocationSkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
+import io.lumine.mythic.api.skills.ThreadSafetyLevel;
 import io.lumine.mythic.bukkit.BukkitAdapter;
 import io.lumine.mythic.core.logging.MythicLogger;
+import io.lumine.mythic.core.skills.SkillExecutor;
+import io.lumine.mythic.core.skills.SkillMechanic;
 
 // settempblock{m=DIRT;rp=LAST;d=0;p=0} @selflocation
 
 public class SetTempBlock
+extends SkillMechanic
 implements ITargetedLocationSkill
  {
     private Material blockType;
     private TempBlockManager.ReplacePolicy replacePolicy;
     private int duration;
     private int priority;
+    public ThreadSafetyLevel threadSafetyLevel = ThreadSafetyLevel.SYNC_ONLY;
 
-    public SetTempBlock(MythicLineConfig mlc) {
+    public SetTempBlock(SkillExecutor manager, File file, String skill, MythicLineConfig mlc) {
+        super(manager, file, skill, mlc);
+        this.threadSafetyLevel = ThreadSafetyLevel.SYNC_ONLY;
         String bt = mlc.getString(new String[]{"types", "type", "t", "material", "mat", "m"}, "DIRT", new String[0]);
         try {
             this.blockType = Material.valueOf(bt.toUpperCase());

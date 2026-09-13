@@ -16,6 +16,7 @@ import dev.covector.maplus.mmextension.*;
 import dev.covector.maplus.packetfucker.PacketFucker;
 import dev.covector.maplus.fakepumpkin.*;
 import dev.covector.maplus.misc.*;
+import dev.covector.maplus.mlskillsrecorder.MLSkillsRecorder;
 import dev.covector.maplus.mmapihook.MMApiHook;
 import dev.covector.maplus.mmapihook.mechanics.TempBlockManager;
 
@@ -29,6 +30,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     private StatsFixListener statsFixListener;
     private MMApiHook mmApiHook;
     private MiscManager miscManager;
+    private MLSkillsRecorder skillsRecorder;
 
     @Override
     public void onEnable() {
@@ -79,6 +81,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // MYTHIC MOBS API HOOK
         (mmApiHook = new MMApiHook()).register();
 
+        // MYTHICLIB SKILLS RECORDER
+        Bukkit.getPluginManager().registerEvents(skillsRecorder = MLSkillsRecorder.GetInstance(), this);
+
         // MISCELLANEOUS
         miscManager = new MiscManager();
         miscManager.register();
@@ -122,6 +127,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
         // MYTHIC MOBS API HOOK
         mmApiHook.unregister();
         TempBlockManager.removeAllBlocks();
+
+        // MYTHICLIB SKILLS RECORDER
+        skillsRecorder.unregister();
 
         // MISCELLANEOUS
         miscManager.unregister();

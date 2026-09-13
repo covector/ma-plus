@@ -32,7 +32,7 @@ public class ResetMana extends Ability {
         
         PlayerData playerData = PlayerData.get(entity.getUniqueId());
         
-        double mana = args.length == 2 ? Double.parseDouble(args[1]) : playerData.getStats().getStat("MAX_MANA");
+        double mana = args.length == 1 ? playerData.getStats().getStat("MAX_MANA") : Double.parseDouble(args[1]);
         
         if (args.length == 3) {
             String mode = args[2].toUpperCase();

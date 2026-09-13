@@ -100,6 +100,7 @@ public class StatsFixListener implements Listener {
 
     // private HashSet<String> emperorMinions = new HashSet<>(Arrays.asList("melee_summon1", "melee_summon2", "melee_summon3", "melee_summon4", "archer_summon1", "creeper_summon", "mage_summon", "mage_summon2"));
     private ArenaPlayer resolveOwner(Entity entity) {
+        if (entity == null) { return null; }
         if (!MythicBukkit.inst().getAPIHelper().isMythicMob(entity)) { return null; }
         ActiveMob am = MythicBukkit.inst().getAPIHelper().getMythicMobInstance(entity);
 

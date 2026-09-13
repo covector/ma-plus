@@ -28,6 +28,7 @@ public class AbilityRegistry {
         add(new BombDefuse());
         add(new Disorient());
         add(new CompassTrack());
+        add(new MLRecast());
     }
 
     private void add(Ability ability) {
