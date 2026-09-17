@@ -5,6 +5,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import com.garbagemule.MobArena.framework.Arena;
+
+import dev.covector.maplus.Utils;
+
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -56,6 +61,12 @@ public class MMExtUtils {
                 .map(Entity::getUniqueId)
                 .map(UUID::toString)
         ), arg);
+    }
+
+    public static List<String> getArenaTabComplete(String arg) {
+        return streamFilter(Utils.getAllArenas().stream()
+            .map(Arena::getSlug)
+            , arg);
     }
 
     public static List<String> streamFilter(Stream<String> list, String arg) {

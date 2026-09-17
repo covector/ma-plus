@@ -1,6 +1,7 @@
 package dev.covector.maplus;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -29,6 +30,10 @@ public class Utils {
 
     public static Arena getArena(String name) {
         return mobarena.getArenaMaster().getArenaWithName(name);
+    }
+
+    public static List<Arena> getAllArenas() {
+        return mobarena.getArenaMaster().getEnabledArenas();
     }
 
     public static Arena getFirstActiveArena() {

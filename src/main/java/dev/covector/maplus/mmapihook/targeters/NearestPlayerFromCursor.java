@@ -31,7 +31,7 @@ public class NearestPlayerFromCursor extends IEntitySelector {
         double maxCos = -2.0;
         for (AbstractPlayer p : MythicBukkit.inst().getEntityManager().getPlayers(am.getEntity().getWorld())) {
             if (p.getUniqueId().toString().equals(am.getEntity().getUniqueId().toString()) || !p.getWorld().equals(am.getEntity().getWorld())) continue;
-            AbstractVector diff = am.getEntity().getLocation().subtract(p.getLocation()).toVector();
+            AbstractVector diff = p.getLocation().subtract(am.getEntity().getLocation()).toVector();
             double length = diff.length();
             if (length == 0.0) {
                 nearest = p;

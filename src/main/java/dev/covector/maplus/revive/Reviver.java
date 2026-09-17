@@ -56,9 +56,9 @@ public class Reviver {
         }
     }
 
-    public void revivePlayer(Arena arena, Player player) {
-        if (!getSpecPlayers(arena).contains(player)) {
-            return;
+    public boolean revivePlayer(Arena arena, Player player) {
+        if (!canRevivePlayer(arena, player)) {
+            return false;
         }
         getArenaPlayers(arena).add(player);
         getSpecPlayers(arena).remove(player);
@@ -66,28 +66,31 @@ public class Reviver {
         player.setGameMode(GameMode.SURVIVAL);
         player.setFoodLevel(20);
         restoreDeathState(arena, player);
+        return true;
     }
 
-    public void revivePlayer(Player player) {
+    public boolean revivePlayer(Player player) {
         Arena arena = Utils.getArenaWithPlayer(player);
-        revivePlayer(arena, player);
+        return revivePlayer(arena, player);
     }
 
-    public void revivePlayer(Arena arena, Player player, String callbackSkill) {
-        revivePlayer(arena, player);
+    public boolean revivePlayer(Arena arena, Player player, String callbackSkill) {
+        boolean success = revivePlayer(arena, player);
 
         // chain with mythic lib ability
-        player.performCommand("ml cast " + callbackSkill);
+        if (success) player.performCommand("ml cast " + callbackSkill);
+
+        return success;
     }
 
-    public void reviveRandomPlayer(Arena arena) {
+    public boolean reviveRandomPlayer(Arena arena) {
         Player player = getOnlineRandomSpecPlayer(arena);
-        revivePlayer(arena, player);
+        return revivePlayer(arena, player);
     }
 
-    public void reviveRandomPlayer(Arena arena, String callbackSkill) {
+    public boolean reviveRandomPlayer(Arena arena, String callbackSkill) {
         Player player = getOnlineRandomSpecPlayer(arena);
-        revivePlayer(arena, player, callbackSkill);
+        return revivePlayer(arena, player, callbackSkill);
     }
 
     private Player getOnlineRandomSpecPlayer(Arena arena) {
@@ -104,6 +107,7 @@ public class Reviver {
     }
 
     public boolean canRevivePlayer(Arena arena, Player player) {
+        if (player == null || arena == null) return false;
         return getSpecPlayers(arena).contains(player) && player.isOnline();
     }
 
