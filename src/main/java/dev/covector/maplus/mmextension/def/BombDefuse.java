@@ -25,12 +25,24 @@ import dev.covector.maplus.Utils;
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
-public class BombDefuse extends Ability {
-    private String syntax = "<target-uuid> <bomb-count> <time-limit-seconds> <success-mm-skill-callback> <fail-mm-skill-callback>";
+public class BombDefuse extends DefaultParamAbility {
+    private String syntax = "target:<target-uuid> bombCount:<int> timeLimitSeconds:<double> onSuccess:<success-mm-skill> onFail:<fail-mm-skill-callback> bombItem:<item-name> defusedItem:<item-name> emptyItem:<item-name>";
+
     private String id = "bombDefuse";
     private int GUISIZE = 6 * 9;
     private double HARDTIMELIMIT = 60D;
     private HashSet<DefuseProcess> processes = new HashSet<>();
+
+    public BombDefuse() {
+        setDefault("target", null, livingEntityTabOptions);
+        setDefault("bombCount", "6");
+        setDefault("timeLimitSeconds", "60");
+        setDefault("onSuccess", null);
+        setDefault("onFail", null);
+        setDefault("bombItem", "RED_DYE");
+        setDefault("defusedItem", "BLACK_DYE");
+        setDefault("emptyItem", "GRAY_DYE");
+    }
 
     private void removeProcess(DefuseProcess process) {
         processes.remove(process);
@@ -52,13 +64,19 @@ public class BombDefuse extends Ability {
         private HashMap<Integer, Boolean> defused;
         private Inventory inv;
         private BombDefuse bombDefuse;
+        private Material bombItem;
+        private Material defusedItem;
+        private Material emptyItem;
 
 
-        public DefuseProcess(Player player, int bombCount, String successCallback, String failCallback, BombDefuse bombDefuse) {
+        public DefuseProcess(Player player, int bombCount, String successCallback, String failCallback, Material bombItem, Material defusedItem, Material emptyItem, BombDefuse bombDefuse) {
             this.player = player;
             this.successCallback = successCallback;
             this.failCallback = failCallback;
             this.defused = new HashMap<>();
+            this.bombItem = bombItem;
+            this.defusedItem = defusedItem;
+            this.emptyItem = emptyItem;
             this.bombDefuse = bombDefuse;
             bombDefuse.processes.add(this);
 
@@ -92,16 +110,20 @@ public class BombDefuse extends Ability {
                 inv.setItem(slot, getDefusedItem());
                 if (allDefused()) {
                     end();
-                    MMExtUtils.castMMSkill(player, successCallback, player, null);
+                    if (successCallback != null) {
+                        MMExtUtils.castMMSkill(player, successCallback, player, null);
+                    }
                 }
             } else {
                 end();
-                MMExtUtils.castMMSkill(player, failCallback, player, null);
+                if (failCallback != null) {
+                    MMExtUtils.castMMSkill(player, failCallback, player, null);
+                }
             }
         }
 
         private ItemStack getBombItem() {
-            ItemStack redDye = new ItemStack(Material.RED_DYE);
+            ItemStack redDye = new ItemStack(bombItem);
             ItemMeta meta = redDye.getItemMeta();
             meta.setDisplayName("Bomb");
             redDye.setItemMeta(meta);
@@ -109,7 +131,7 @@ public class BombDefuse extends Ability {
         }
 
         private ItemStack getDefusedItem() {
-            ItemStack blackDye = new ItemStack(Material.BLACK_DYE);
+            ItemStack blackDye = new ItemStack(defusedItem);
             ItemMeta meta = blackDye.getItemMeta();
             meta.setDisplayName("Defused");
             blackDye.setItemMeta(meta);
@@ -117,7 +139,7 @@ public class BombDefuse extends Ability {
         }
 
         private ItemStack getEmptyItem() {
-            ItemStack grayDye = new ItemStack(Material.GRAY_DYE);
+            ItemStack grayDye = new ItemStack(emptyItem);
             return grayDye;
         }
 
@@ -171,20 +193,50 @@ public class BombDefuse extends Ability {
     }
 
     public String cast(String[] args) {
-        if (args.length != 5) {
-            return "args length must be 5";
+        if (args.length < 1) {
+            return "args length must at least be 1";
         }
+        ParsedParam parsedParam;
+        try {
+            parsedParam = parse(args);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        
+        String targetUUID = getParam(parsedParam, "target");
+        if (targetUUID == null) {
+            return "target must be specified";
+        }
+        Entity target = MMExtUtils.parseUUID(targetUUID);
+        int bombCount = getInt(parsedParam, "bombCount");
+        double duration = getDouble(parsedParam, "timeLimitSeconds");
+        String successCallback = getParam(parsedParam, "onSuccess");
+        String failCallback = getParam(parsedParam, "onFail");
+        String bombItemName = getParam(parsedParam, "bombItem");
+        String defusedItemName = getParam(parsedParam, "defusedItem");        
+        String emptyItemName = getParam(parsedParam, "emptyItem");
 
-        Entity target = MMExtUtils.parseUUID(args[0]);
-        int bombCount = Integer.parseInt(args[1]);
-        double duration = Double.parseDouble(args[2]);
+        // check if item exists
+        Material bombItem = null;
+        Material defusedItem = null;
+        Material emptyItem = null;
+        if (bombItemName != null) {
+            bombItem = Material.getMaterial(bombItemName);
+            if (bombItem == null) {
+                return "bombItem must be a valid material";
+            }
+        }
+        defusedItem = Material.getMaterial(defusedItemName);
+        if (defusedItem == null) {
+            return "defusedItem must be a valid material";
+        }
+        emptyItem = Material.getMaterial(emptyItemName);
+        if (emptyItem == null) {
+            return "emptyItem must be a valid material";
+        }
         
         if (!(target instanceof Player)) {
             return "target must be a player";
-        }
-
-        if (duration > HARDTIMELIMIT) {
-            return "time limit is too long";
         }
 
         if (bombCount > GUISIZE) {
@@ -195,7 +247,7 @@ public class BombDefuse extends Ability {
         if (isProcessRunning(targetPlayer)) {
             return "target player is already defusing a bomb";
         }
-        new DefuseProcess(targetPlayer, bombCount, args[3], args[4], this).runTaskLater(Utils.getPlugin(), (long) (duration * 20D));
+        new DefuseProcess(targetPlayer, bombCount, successCallback, failCallback, bombItem, defusedItem, emptyItem, this).runTaskLater(Utils.getPlugin(), (long) (duration * 20D));
 
         return null;
     }
@@ -206,13 +258,5 @@ public class BombDefuse extends Ability {
 
     public String getId() {
         return id;
-    }
-
-    public List<String> getTabComplete(CommandSender sender, String[] argsList) {
-        if (argsList.length == 1 && sender instanceof Player) {
-            return MMExtUtils.getLivingEntityTabComplete(argsList[0], (Player) sender);
-        }
-        
-        return super.getTabComplete(sender, argsList);
     }
 }

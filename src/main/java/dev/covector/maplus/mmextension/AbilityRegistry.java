@@ -29,6 +29,10 @@ public class AbilityRegistry {
         add(new Disorient());
         add(new CompassTrack());
         add(new MLRecast());
+        add(new TridentReturn());
+        add(new MLDisabler());
+        add(new StashInventory());
+        add(new SetBossBar());
     }
 
     private void add(Ability ability) {
