@@ -78,6 +78,10 @@ public class SetBossBar extends Ability {
         return bar;
     }
 
+    protected String parseTitle(String title) {
+        return title.replaceAll("-", " ");
+    }
+
     protected void setTitle(Player player, String title, BarColor color, BarStyle style, double progress) {
         // edit existing bossbar if it exists
         BossBar existing = getBossBar(player, title);
@@ -89,7 +93,7 @@ public class SetBossBar extends Ability {
         }
 
         // create new bossbar
-        BossBar bar = Bukkit.createBossBar(title, color, style);
+        BossBar bar = Bukkit.createBossBar(parseTitle(title), color, style);
         bar.setProgress(progress);
         putBossBar(player, title, bar);
         bar.addPlayer(player);
