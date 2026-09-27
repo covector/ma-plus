@@ -2,6 +2,7 @@ package dev.covector.maplus.mmextension.def;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -111,8 +112,12 @@ public class SetBossBar extends Ability {
     }
 
     protected void clearTitles(Player player) {
-        for (String title : bossBar.get(player.getUniqueId().toString()).keySet()) {
-            removeTitle(player, title);
+        String uuid = player.getUniqueId().toString();
+        if (bossBar.containsKey(uuid)) {
+            List<String> titles = new ArrayList<>(bossBar.get(uuid).keySet());
+            for (String title : titles) {
+                removeTitle(player, title);
+            }
         }
     }
 
