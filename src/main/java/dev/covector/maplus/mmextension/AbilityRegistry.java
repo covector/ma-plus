@@ -33,6 +33,7 @@ public class AbilityRegistry {
         add(new MLDisabler());
         add(new StashInventory());
         add(new SetBossBar());
+        add(new RightClickTridentReturn());
     }
 
     private void add(Ability ability) {

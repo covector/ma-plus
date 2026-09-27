@@ -1,19 +1,19 @@
 package dev.covector.maplus.mmextension.def;
 
-import java.util.List;
 import java.lang.reflect.Field;
+import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.util.Vector;
-import org.bukkit.Bukkit;
 
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
-
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 
 public class TridentReturn extends Ability {
     private String syntax = "<target-player> <can-hit-on-return:(true|false)> <return-speed(only-for-can-hit-on-return-true)>";
@@ -33,18 +33,25 @@ public class TridentReturn extends Ability {
         boolean canHitOnReturn = Boolean.parseBoolean(args[1]);
         double returnSpeed = args.length == 3 ? Double.parseDouble(args[2]) : 1;
 
+        resetTrident(player, canHitOnReturn, returnSpeed);
+
+        return null;
+    }
+
+    public static void resetTrident(Player player, boolean canHitOnReturn, double returnSpeed) {
         // loop through all trident
         World world = player.getWorld();
         for (Entity entity : world.getEntitiesByClass(Trident.class)) {
             Trident trident = (Trident) entity;
 
             // check if trident belongs to player
-            if (!(trident.getShooter() instanceof Player)) return null;
+            if (!(trident.getShooter() instanceof Player)) return;
             Player shooter = (Player) trident.getShooter();
                         
-            if (!(shooter.getUniqueId().equals(player.getUniqueId()))) return null;
+            if (!(shooter.getUniqueId().equals(player.getUniqueId()))) return;
 
-            if (trident.isValid() && !trident.isDead()) {
+            int loyaltyLevel = trident.getItem().getItemMeta().getEnchantLevel(Enchantment.LOYALTY);
+            if (trident.isValid() && !trident.isDead() && loyaltyLevel > 0) {
                 // cannot hit on return
                 if (!canHitOnReturn) {
                     try {
@@ -57,7 +64,7 @@ public class TridentReturn extends Ability {
                         dealtDamageField.setAccessible(true);
                         dealtDamageField.setBoolean(nmsTrident, true);
                         
-                        return null;
+                        return;
                     } catch (Exception e) {
                         Bukkit.broadcastMessage("Error: Could not set trident to dealtDamage");
                     }
@@ -74,8 +81,6 @@ public class TridentReturn extends Ability {
                 trident.setVelocity(distance.multiply(returnSpeed * 0.1D));
             }
         }
-
-        return null;
     }
 
     public String getSyntax() {
