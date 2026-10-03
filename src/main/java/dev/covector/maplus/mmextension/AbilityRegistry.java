@@ -34,6 +34,9 @@ public class AbilityRegistry {
         add(new StashInventory());
         add(new SetBossBar());
         add(new RightClickTridentReturn());
+        add(new setHostileTarget());
+        add(new SetMobVision());
+        add(new RemoveItem());
     }
 
     private void add(Ability ability) {

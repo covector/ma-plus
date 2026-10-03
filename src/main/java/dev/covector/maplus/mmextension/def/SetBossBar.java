@@ -17,8 +17,6 @@ import org.bukkit.Bukkit;
 
 import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
-import io.lumine.mythic.lib.api.player.MMOPlayerData;
-import io.lumine.mythic.lib.player.cooldown.CooldownMap;
 
 public class SetBossBar extends Ability {
     private String syntax = "<target-player> set <title> <color:(" + availableColors() + ")> <style:(" + availableStyles() + ")> <progress:(0-1)> OR <target-player> remove <title> OR <target-player> clear";
@@ -79,10 +77,6 @@ public class SetBossBar extends Ability {
         return bar;
     }
 
-    protected String parseTitle(String title) {
-        return title.replaceAll("-", " ");
-    }
-
     protected void setTitle(Player player, String title, BarColor color, BarStyle style, double progress) {
         // edit existing bossbar if it exists
         BossBar existing = getBossBar(player, title);
@@ -94,7 +88,7 @@ public class SetBossBar extends Ability {
         }
 
         // create new bossbar
-        BossBar bar = Bukkit.createBossBar(parseTitle(title), color, style);
+        BossBar bar = Bukkit.createBossBar(title, color, style);
         bar.setProgress(progress);
         putBossBar(player, title, bar);
         bar.addPlayer(player);
@@ -103,11 +97,8 @@ public class SetBossBar extends Ability {
     protected void removeTitle(Player player, String title) {
         BossBar bar = getBossBar(player, title);
         if (bar != null) {
-            bar.removePlayer(player);
-            if (bar.getPlayers().size() == 0) {
-                bar.removeAll();
-                bossBar.get(player.getUniqueId().toString()).remove(title);
-            }
+            bar.removeAll();
+            bossBar.get(player.getUniqueId().toString()).remove(title);
         }
     }
 

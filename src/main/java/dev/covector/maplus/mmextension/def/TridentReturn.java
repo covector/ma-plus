@@ -45,10 +45,10 @@ public class TridentReturn extends Ability {
             Trident trident = (Trident) entity;
 
             // check if trident belongs to player
-            if (!(trident.getShooter() instanceof Player)) return;
+            if (!(trident.getShooter() instanceof Player)) continue;
             Player shooter = (Player) trident.getShooter();
                         
-            if (!(shooter.getUniqueId().equals(player.getUniqueId()))) return;
+            if (!(shooter.getUniqueId().equals(player.getUniqueId()))) continue;
 
             int loyaltyLevel = trident.getItem().getItemMeta().getEnchantLevel(Enchantment.LOYALTY);
             if (trident.isValid() && !trident.isDead() && loyaltyLevel > 0) {
@@ -64,7 +64,7 @@ public class TridentReturn extends Ability {
                         dealtDamageField.setAccessible(true);
                         dealtDamageField.setBoolean(nmsTrident, true);
                         
-                        return;
+                        continue;
                     } catch (Exception e) {
                         Bukkit.broadcastMessage("Error: Could not set trident to dealtDamage");
                     }

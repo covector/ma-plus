@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.HumanEntity;
 
+import dev.covector.maplus.Utils;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,10 @@ public class AbilityCommandInterface implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] _args) {
+        // support string args in quotes
+        String[] args = Utils.parseSpaces(_args);
+
         if (args.length < 1) {
             return false;
         }
@@ -49,7 +54,10 @@ public class AbilityCommandInterface implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] _args) {
+        // support string args in quotes
+        String[] args = Utils.parseSpaces(_args);
+        
         if (args.length == 1) {
             return MMExtUtils.streamFilter(registry.getAbilityIds(), args[0]);
         }

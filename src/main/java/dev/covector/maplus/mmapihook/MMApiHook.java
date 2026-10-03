@@ -58,6 +58,9 @@ public class MMApiHook implements Listener{
 		if (event.getMechanicName().equalsIgnoreCase("FIXBARUNICODE")) {
 			event.register(new FixBarUnicode(event.getConfig()));
 		}
+		if (event.getMechanicName().equalsIgnoreCase("PROJECTILEFIX")) {
+			event.register(new ProjectileFix(manager, null, skillNString, config));
+		}
 	}
 	
 	@EventHandler

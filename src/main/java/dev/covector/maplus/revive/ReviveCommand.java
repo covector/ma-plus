@@ -13,6 +13,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.garbagemule.MobArena.framework.Arena;
@@ -21,8 +23,8 @@ import dev.covector.maplus.Utils;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
 /**
- * /revive random <arena> <success-callback?>
- * /revive player <player> <success-callback?>
+ * /revive random <arena> <success-callback?> <caster-uuid?>
+ * /revive player <player> <success-callback?> <caster-uuid?>
  */
 public class ReviveCommand implements CommandExecutor, TabCompleter {
     private Reviver reviver;
@@ -37,6 +39,7 @@ public class ReviveCommand implements CommandExecutor, TabCompleter {
         switch(args.length) {
             case 2:
             case 3:
+            case 4:
                 if (args[0].equals("random")) {
                     // random revive
                     arena = Utils.getArena(args[1]);
@@ -47,16 +50,19 @@ public class ReviveCommand implements CommandExecutor, TabCompleter {
                     if (args.length == 2) {
                         reviver.reviveRandomPlayer(arena);
                     } else {
-                        reviver.reviveRandomPlayer(arena, args[2]);
+                        Entity caster = MMExtUtils.parseUUID(args[3]);
+                        LivingEntity livingCaster = caster instanceof LivingEntity ? (LivingEntity) caster : null;
+                        reviver.reviveRandomPlayer(arena, args[2], livingCaster);
                     }
                     return true;
                 } else if (args[0].equals("player")) {
                     // revive player
-                    Player player = Bukkit.getServer().getPlayer(args[1]);
-                    if (player == null) {
+                    Entity reviveTarget = MMExtUtils.parseUUID(args[1]);
+                    if (!(reviveTarget instanceof Player)) {
                         sender.sendMessage(ChatColor.RED + "Player not found!");
                         return true;
                     }
+                    Player player = (Player) reviveTarget;
                     arena = Utils.getArenaWithPlayer(player);
                     if (arena == null || !arena.isRunning()) {
                         sender.sendMessage(ChatColor.RED + "Player not in any active arena!");
@@ -69,7 +75,9 @@ public class ReviveCommand implements CommandExecutor, TabCompleter {
                     if (args.length == 2) {
                         reviver.revivePlayer(arena, player);
                     } else {
-                        reviver.revivePlayer(arena, player, args[2]);
+                        Entity caster = MMExtUtils.parseUUID(args[3]);
+                        LivingEntity livingCaster = caster instanceof LivingEntity ? (LivingEntity) caster : null;
+                        reviver.revivePlayer(arena, player, args[2], livingCaster);
                     }
                     return true;
                 }
@@ -92,6 +100,8 @@ public class ReviveCommand implements CommandExecutor, TabCompleter {
                 break;
             case 3:
                 return List.of("<success-callback-skill>");
+            case 4:
+                return MMExtUtils.getLivingEntityTabComplete(args[args.length-1]);
         }
 
         return Collections.emptyList();

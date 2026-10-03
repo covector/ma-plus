@@ -22,6 +22,7 @@ import dev.covector.maplus.packetfucker.def.FakeDeath;
 import dev.covector.maplus.packetfucker.def.FakeRain;
 import dev.covector.maplus.packetfucker.def.FastTimeCycle;
 import dev.covector.maplus.packetfucker.def.GhostCage;
+import dev.covector.maplus.packetfucker.def.MobVision;
 import dev.covector.maplus.packetfucker.def.SineFloat;
 import dev.covector.maplus.packetfucker.def.SineFloatIndv;
 import dev.covector.maplus.packetfucker.def.WorldBorder;
@@ -47,6 +48,7 @@ public class PacketFucker {
         packetHandlers.put("fakeDamage", new FakeDamage());
         packetHandlers.put("fakeRain", new FakeRain());
         packetHandlers.put("sineFloatINDV", new SineFloatIndv());
+        packetHandlers.put("mobVision", new MobVision());
     }
     public boolean hasHandler(String packetHandlerName) {
         return packetHandlers.containsKey(packetHandlerName);

@@ -2,6 +2,7 @@ package dev.covector.maplus.revive;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -16,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.Random;
 
 import dev.covector.maplus.Utils;
+import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class Reviver {
     private Field arenaPlayers;
@@ -74,11 +76,13 @@ public class Reviver {
         return revivePlayer(arena, player);
     }
 
-    public boolean revivePlayer(Arena arena, Player player, String callbackSkill) {
+    public boolean revivePlayer(Arena arena, Player player, String callbackSkill, LivingEntity caster) {
         boolean success = revivePlayer(arena, player);
 
         // chain with mythic lib ability
-        if (success) player.performCommand("ml cast " + callbackSkill);
+        if (caster != null) {
+            MMExtUtils.castMMSkill(caster, callbackSkill, player, null);
+        }
 
         return success;
     }
@@ -88,9 +92,9 @@ public class Reviver {
         return revivePlayer(arena, player);
     }
 
-    public boolean reviveRandomPlayer(Arena arena, String callbackSkill) {
+    public boolean reviveRandomPlayer(Arena arena, String callbackSkill, LivingEntity caster) {
         Player player = getOnlineRandomSpecPlayer(arena);
-        return revivePlayer(arena, player, callbackSkill);
+        return revivePlayer(arena, player, callbackSkill, caster);
     }
 
     private Player getOnlineRandomSpecPlayer(Arena arena) {

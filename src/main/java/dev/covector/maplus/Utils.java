@@ -62,6 +62,52 @@ public class Utils {
         }
     }
 
+    public static String[] parseSpaces(String[] args) {
+        ArrayList<String> newArgs = new ArrayList<>();
+        boolean inQuotes = false;
+        StringBuilder currentArg = new StringBuilder();
+        for (String arg : args) {
+            if (inQuotes) {
+                if (arg.endsWith("\"")) {
+                    // end of string
+                    inQuotes = false;
+                    currentArg.append(" " + arg.substring(0, arg.length() - 1));
+                    newArgs.add(currentArg.toString());
+                    currentArg.setLength(0);
+                } else {
+                    // continue string
+                    currentArg.append(" " + arg);
+                }
+            } else {
+                if (arg.contains("\"")) {
+                    // get word without first quote
+                    int firstQuoteInd = arg.indexOf("\"");
+                    currentArg.append(arg).deleteCharAt(firstQuoteInd);
+
+                    // start of string
+                    if (currentArg.length() > 0 && currentArg.charAt(currentArg.length() - 1) == '"') {
+                        // no spaces
+                        currentArg.deleteCharAt(currentArg.length() - 1); // remove ending quote
+                        newArgs.add(currentArg.toString());
+                        currentArg.setLength(0);
+                    } else {
+                        inQuotes = true;
+                    }
+                } else {
+                    // normal parse
+                    newArgs.add(arg);
+                }
+            }
+        }
+
+        // leftover
+        if (inQuotes) {
+            newArgs.add(currentArg.toString());
+        }
+
+        return newArgs.toArray(new String[0]);
+    }
+
     public interface Destructor {
         void destroy();
     }

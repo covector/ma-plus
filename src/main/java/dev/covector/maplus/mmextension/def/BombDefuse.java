@@ -26,7 +26,7 @@ import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class BombDefuse extends DefaultParamAbility {
-    private String syntax = "target:<target-uuid> bombCount:<int> timeLimitSeconds:<double> onSuccess:<success-mm-skill> onFail:<fail-mm-skill-callback> bombItem:<item-name> defusedItem:<item-name> emptyItem:<item-name>";
+    private String syntax = "target:<target-uuid> bombCount:<int> timeLimitSeconds:<double> onSuccess:<success-mm-skill> onFail:<fail-mm-skill> guiTitle:<string> bombItem:<item> bombItemName:<string> defusedItem:<item> defusedItemName:<string> emptyItem:<item> emptyItemName:<string>";
 
     private String id = "bombDefuse";
     private int GUISIZE = 6 * 9;
@@ -39,9 +39,16 @@ public class BombDefuse extends DefaultParamAbility {
         setDefault("timeLimitSeconds", "60");
         setDefault("onSuccess", null);
         setDefault("onFail", null);
+        setDefault("guiTitle", "Defuse the bomb!");
+    
         setDefault("bombItem", "RED_DYE");
+        setDefault("bombItemName", "BOMB");
+        
         setDefault("defusedItem", "BLACK_DYE");
+        setDefault("defusedItemName", "Defused");
+
         setDefault("emptyItem", "GRAY_DYE");
+        setDefault("emptyItemName", "");
     }
 
     private void removeProcess(DefuseProcess process) {
@@ -63,20 +70,40 @@ public class BombDefuse extends DefaultParamAbility {
         private String failCallback;
         private HashMap<Integer, Boolean> defused;
         private Inventory inv;
+        private String guiTitle;
         private BombDefuse bombDefuse;
         private Material bombItem;
+        private String bombItemName;
         private Material defusedItem;
+        private String defusedItemName;
         private Material emptyItem;
+        private String emptyItemName;
 
 
-        public DefuseProcess(Player player, int bombCount, String successCallback, String failCallback, Material bombItem, Material defusedItem, Material emptyItem, BombDefuse bombDefuse) {
+        public DefuseProcess(
+            Player player, 
+            int bombCount, 
+            String successCallback, 
+            String failCallback, 
+            String guiTitle,
+            Material bombItem, 
+            String bombItemName,
+            Material defusedItem, 
+            String defusedItemName,
+            Material emptyItem, 
+            String emptyItemName,
+            BombDefuse bombDefuse) {
             this.player = player;
             this.successCallback = successCallback;
             this.failCallback = failCallback;
             this.defused = new HashMap<>();
+            this.guiTitle = guiTitle;
             this.bombItem = bombItem;
+            this.bombItemName = bombItemName;
             this.defusedItem = defusedItem;
+            this.defusedItemName = defusedItemName;
             this.emptyItem = emptyItem;
+            this.emptyItemName = emptyItemName;
             this.bombDefuse = bombDefuse;
             bombDefuse.processes.add(this);
 
@@ -122,29 +149,28 @@ public class BombDefuse extends DefaultParamAbility {
             }
         }
 
-        private ItemStack getBombItem() {
-            ItemStack redDye = new ItemStack(bombItem);
-            ItemMeta meta = redDye.getItemMeta();
-            meta.setDisplayName("Bomb");
-            redDye.setItemMeta(meta);
-            return redDye;
-        }
-
-        private ItemStack getDefusedItem() {
-            ItemStack blackDye = new ItemStack(defusedItem);
-            ItemMeta meta = blackDye.getItemMeta();
-            meta.setDisplayName("Defused");
-            blackDye.setItemMeta(meta);
-            return blackDye;
+        private ItemStack getItem(Material itemType, String itemName) {
+            ItemStack itemStack = new ItemStack(itemType);
+            ItemMeta meta = itemStack.getItemMeta();
+            meta.setDisplayName(itemName);
+            itemStack.setItemMeta(meta);
+            return itemStack;
         }
 
         private ItemStack getEmptyItem() {
-            ItemStack grayDye = new ItemStack(emptyItem);
-            return grayDye;
+            return getItem(emptyItem, emptyItemName);
+        }
+
+        private ItemStack getDefusedItem() {
+            return getItem(defusedItem, defusedItemName);
+        }
+
+        private ItemStack getBombItem() {
+            return getItem(bombItem, bombItemName);
         }
 
         private Inventory createInventory() {
-            Inventory inv = Bukkit.createInventory(null, GUISIZE, "Defuse the bomb!");
+            Inventory inv = Bukkit.createInventory(null, GUISIZE, guiTitle);
             for (int i = 0; i < GUISIZE; i++) {
                 inv.setItem(i, getEmptyItem());
             }
@@ -170,7 +196,7 @@ public class BombDefuse extends DefaultParamAbility {
             if (e.getInventory() != inv) { return; }
             new BukkitRunnable() {
                 public void run() {
-                    if (player.getOpenInventory().getTitle().equals("Defuse the bomb!")) {
+                    if (player.getOpenInventory().getTitle().equals(guiTitle)) {
                         return;
                     }
                     player.openInventory(inv);
@@ -212,27 +238,29 @@ public class BombDefuse extends DefaultParamAbility {
         double duration = getDouble(parsedParam, "timeLimitSeconds");
         String successCallback = getParam(parsedParam, "onSuccess");
         String failCallback = getParam(parsedParam, "onFail");
-        String bombItemName = getParam(parsedParam, "bombItem");
-        String defusedItemName = getParam(parsedParam, "defusedItem");        
-        String emptyItemName = getParam(parsedParam, "emptyItem");
+        String guiTitle = getParam(parsedParam, "guiTitle");
+        String bombItemType = getParam(parsedParam, "bombItem");
+        String bombItemName = getParam(parsedParam, "bombItemName");
+        String defusedItemType = getParam(parsedParam, "defusedItem");     
+        String defusedItemName = getParam(parsedParam, "defusedItemName");
+        String emptyItemType = getParam(parsedParam, "emptyItem");
+        String emptyItemName = getParam(parsedParam, "emptyItemName");
 
         // check if item exists
         Material bombItem = null;
         Material defusedItem = null;
         Material emptyItem = null;
-        if (bombItemName != null) {
-            bombItem = Material.getMaterial(bombItemName);
-            if (bombItem == null) {
-                return "bombItem must be a valid material";
-            }
+        bombItem = Material.getMaterial(bombItemType);
+        if (bombItem == null) {
+            return "bombItemType must be a valid material";
         }
-        defusedItem = Material.getMaterial(defusedItemName);
+        defusedItem = Material.getMaterial(defusedItemType);
         if (defusedItem == null) {
-            return "defusedItem must be a valid material";
+            return "defusedItemType must be a valid material";
         }
-        emptyItem = Material.getMaterial(emptyItemName);
+        emptyItem = Material.getMaterial(emptyItemType);
         if (emptyItem == null) {
-            return "emptyItem must be a valid material";
+            return "emptyItemType must be a valid material";
         }
         
         if (!(target instanceof Player)) {
@@ -247,7 +275,19 @@ public class BombDefuse extends DefaultParamAbility {
         if (isProcessRunning(targetPlayer)) {
             return "target player is already defusing a bomb";
         }
-        new DefuseProcess(targetPlayer, bombCount, successCallback, failCallback, bombItem, defusedItem, emptyItem, this).runTaskLater(Utils.getPlugin(), (long) (duration * 20D));
+        new DefuseProcess(
+            targetPlayer,
+            bombCount,
+            successCallback,
+            failCallback,
+            guiTitle, 
+            bombItem, 
+            bombItemName,
+            defusedItem, 
+            defusedItemName,
+            emptyItem, 
+            emptyItemName,
+            this).runTaskLater(Utils.getPlugin(), (long) (duration * 20D));
 
         return null;
     }
