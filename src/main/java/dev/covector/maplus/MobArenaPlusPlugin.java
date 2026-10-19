@@ -14,6 +14,7 @@ import dev.covector.maplus.leaderboardclear.*;
 import dev.covector.maplus.tridentnopickup.*;
 import dev.covector.maplus.mmextension.*;
 import dev.covector.maplus.packetfucker.PacketFucker;
+import dev.covector.maplus.autorevive.AutoRevive;
 import dev.covector.maplus.fakepumpkin.*;
 import dev.covector.maplus.misc.*;
 import dev.covector.maplus.mlskillsrecorder.MLSkillsRecorder;
@@ -22,6 +23,7 @@ import dev.covector.maplus.mmapihook.mechanics.TempBlockManager;
 
 public class MobArenaPlusPlugin extends JavaPlugin
 {
+    public Reviver reviver;
     private ReviveMAListener reviverListener;
     private ReviveCommand reviveCommand;
     private CLBListener clbListener;
@@ -31,6 +33,7 @@ public class MobArenaPlusPlugin extends JavaPlugin
     private MMApiHook mmApiHook;
     private MiscManager miscManager;
     private MLSkillsRecorder skillsRecorder;
+    private AutoRevive autoRevive;
 
     @Override
     public void onEnable() {
@@ -40,6 +43,8 @@ public class MobArenaPlusPlugin extends JavaPlugin
         //     PacketFucker.getInstance().registerPacketListener();
         //     return;
         // }
+
+        this.saveDefaultConfig(); 
 
         Plugin maplugin = getServer().getPluginManager().getPlugin("MobArena");
         if (maplugin == null) {
@@ -52,9 +57,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
         Utils.setPlugin(this);
 
         // REVIVE
-        Reviver reviver = new Reviver();
-        this.getCommand("marevive").setExecutor(reviveCommand = new ReviveCommand(reviver));
-        Bukkit.getPluginManager().registerEvents(reviverListener = new ReviveMAListener(reviver), this);
+        this.reviver = new Reviver();
+        this.getCommand("marevive").setExecutor(reviveCommand = new ReviveCommand(this.reviver));
+        Bukkit.getPluginManager().registerEvents(reviverListener = new ReviveMAListener(this.reviver), this);
 
         // LEADERBOARD CLEAR
         Plugin ajlplugin = getServer().getPluginManager().getPlugin("ajLeaderboards");
@@ -83,6 +88,10 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // MYTHICLIB SKILLS RECORDER
         Bukkit.getPluginManager().registerEvents(skillsRecorder = MLSkillsRecorder.GetInstance(), this);
+
+        // AUTO REVIVE
+        autoRevive = new AutoRevive();
+        Bukkit.getPluginManager().registerEvents(autoRevive, this);
 
         // MISCELLANEOUS
         miscManager = new MiscManager();
@@ -130,6 +139,9 @@ public class MobArenaPlusPlugin extends JavaPlugin
 
         // MYTHICLIB SKILLS RECORDER
         skillsRecorder.unregister();
+
+        // AUTO REVIVE
+        autoRevive.unregister();
 
         // MISCELLANEOUS
         miscManager.unregister();

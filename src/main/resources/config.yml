@@ -1,0 +1,4 @@
+auto-revive:
+  enabled: true
+  dead-wave-before-revive: 1 # e.g. 20 -> dying in wave 4 will revive you in wave 24
+  punishment-health-reduction: 0.1 # e.g. 0.1 -> 10% health reduction
