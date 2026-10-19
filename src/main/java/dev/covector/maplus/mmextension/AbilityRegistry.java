@@ -37,6 +37,8 @@ public class AbilityRegistry {
         add(new setHostileTarget());
         add(new SetMobVision());
         add(new RemoveItem());
+        add(new SwapInventory());
+        add(new ShuffleInventory());
     }
 
     private void add(Ability ability) {

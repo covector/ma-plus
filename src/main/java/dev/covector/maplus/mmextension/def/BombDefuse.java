@@ -26,7 +26,7 @@ import dev.covector.maplus.mmextension.Ability;
 import dev.covector.maplus.mmextension.MMExtUtils;
 
 public class BombDefuse extends DefaultParamAbility {
-    private String syntax = "target:<target-uuid> bombCount:<int> timeLimitSeconds:<double> onSuccess:<success-mm-skill> onFail:<fail-mm-skill> guiTitle:<string> bombItem:<item> bombItemName:<string> defusedItem:<item> defusedItemName:<string> emptyItem:<item> emptyItemName:<string>";
+    private String syntax = "target:<target-uuid> bombCount:<int> timeLimitSeconds:<double> canBeClosed:<true|false> onSuccess:<success-mm-skill> onFail:<fail-mm-skill> guiTitle:<string> bombItem:<item> bombItemName:<string> defusedItem:<item> defusedItemName:<string> emptyItem:<item> emptyItemName:<string>";
 
     private String id = "bombDefuse";
     private int GUISIZE = 6 * 9;
@@ -37,6 +37,7 @@ public class BombDefuse extends DefaultParamAbility {
         setDefault("target", null, livingEntityTabOptions);
         setDefault("bombCount", "6");
         setDefault("timeLimitSeconds", "60");
+        setDefault("canBeClosed", "false");
         setDefault("onSuccess", null);
         setDefault("onFail", null);
         setDefault("guiTitle", "Defuse the bomb!");
@@ -70,6 +71,7 @@ public class BombDefuse extends DefaultParamAbility {
         private String failCallback;
         private HashMap<Integer, Boolean> defused;
         private Inventory inv;
+        private boolean canBeClosed;
         private String guiTitle;
         private BombDefuse bombDefuse;
         private Material bombItem;
@@ -83,6 +85,7 @@ public class BombDefuse extends DefaultParamAbility {
         public DefuseProcess(
             Player player, 
             int bombCount, 
+            boolean canBeClosed,
             String successCallback, 
             String failCallback, 
             String guiTitle,
@@ -94,6 +97,7 @@ public class BombDefuse extends DefaultParamAbility {
             String emptyItemName,
             BombDefuse bombDefuse) {
             this.player = player;
+            this.canBeClosed = canBeClosed;
             this.successCallback = successCallback;
             this.failCallback = failCallback;
             this.defused = new HashMap<>();
@@ -194,6 +198,10 @@ public class BombDefuse extends DefaultParamAbility {
             Player p = (Player) e.getPlayer();
             if (p != player) { return; }
             if (e.getInventory() != inv) { return; }
+            if (canBeClosed) {
+                end();
+                return;
+            }
             new BukkitRunnable() {
                 public void run() {
                     if (player.getOpenInventory().getTitle().equals(guiTitle)) {
@@ -236,6 +244,7 @@ public class BombDefuse extends DefaultParamAbility {
         Entity target = MMExtUtils.parseUUID(targetUUID);
         int bombCount = getInt(parsedParam, "bombCount");
         double duration = getDouble(parsedParam, "timeLimitSeconds");
+        boolean canBeClosed = getBoolean(parsedParam, "canBeClosed");
         String successCallback = getParam(parsedParam, "onSuccess");
         String failCallback = getParam(parsedParam, "onFail");
         String guiTitle = getParam(parsedParam, "guiTitle");
@@ -278,6 +287,7 @@ public class BombDefuse extends DefaultParamAbility {
         new DefuseProcess(
             targetPlayer,
             bombCount,
+            canBeClosed,
             successCallback,
             failCallback,
             guiTitle, 
